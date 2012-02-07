@@ -4,3 +4,6 @@
 [submodule "vendor/src/tornado-utils"]
 	path = vendor/src/tornado-utils
 	url = git://github.com/peterbe/tornado-utils.git
+[submodule "vendor/src/validictory"]
+	path = vendor/src/validictory
+	url = git://github.com/sunlightlabs/validictory.git
