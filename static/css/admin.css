@@ -1,0 +1,50 @@
+.admin-nav {
+	border-bottom: 1px solid #999;
+	margin:0px 0px 20px;
+}
+.admin-nav>ul>li{
+	float:left;
+	list-style-type: none;
+	margin: 20px 10px;
+}
+.admin-nav>ul>li:hover{
+	background: #eee;
+}
+.admin-nav>ul>li>ul {
+	position: fixed;
+	display: none;
+	background: #eee;
+}
+
+.admin-nav>ul>li>ul>li{
+	float: none;
+}
+
+.admin-nav>ul>li:hover>ul{
+	display: block;
+}
+.r {
+	color: red;
+}
+td.admin-op {
+	background: #ddd;
+	color: #888;
+}
+.pagination {
+	border: 1px dotted #DDD;
+	padding: 5px;
+	margin: 5px;
+	float: left;
+}
+.pagination input{
+	width: 20px;
+}
+.search-box {
+	border: 1px dotted #DDD;
+	padding: 5px;
+	margin: 5px;
+	float: left;
+}
+.search-box input{
+	width:230px;
+}

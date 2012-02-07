@@ -1,0 +1,44 @@
+<!-- 用户管理 -->
+{% extends "base-admin.html" %}
+
+{% block page %}
+<div class="page">
+	<div class="clear">
+	{% include "module-pagination.html" %}
+	{% include "module-search.html" %}
+	</div>
+	<table border="1">
+		<tr>
+			<th>id</th>
+			<th>email</th>
+			<th>uniquename</th>
+			<th>displayname</th>
+			<th>stat</th>
+			<th>mtype</th>
+			<th>操作</th>
+		</tr>
+		{% for user in arg['data'] %}
+		<tr>
+			<td>{{user.uid}}</td>
+			<td>{{user.email}}</td>
+			<td>{{user.uniquename}}</td>
+			<td>{{user.displayname}}</td>
+			<td>{{user.stat}}</td>
+			<td>{{user.mtype}}</td>
+			<td class="admin-op">
+				{% if user.stat=='active' %}
+					<a href="/admin/user/list?op=disable&uid={{user.uid}}">禁用他</a>
+				{% else %}
+					<a href="/admin/user/list?op=enable&uid={{user.uid}}">激活他</a>
+				{% end %} 
+				{% if user.mtype=='admin' or user.mtype=='superadmin'%}
+					<a href="/admin/user/list?op=powerdown&uid={{user.uid}}">设置他为user</a>
+				{% else %}
+					<a href="/admin/user/list?op=powerup&uid={{user.uid}}">设置他为admin</a>
+				{% end %} 
+			</td>
+		</tr>
+		{% end %}
+	</table>
+</div>
+{% end %}

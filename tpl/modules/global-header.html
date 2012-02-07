@@ -1,0 +1,54 @@
+<div id="global-header" class="global-header clear">
+	<div class="wrapper">
+		<div class="home-logo">
+			<a class="home" href="/">回到首页</a>
+		</div>
+		<div class="site-nav left">
+			<ul >
+				<li>
+					<a href="/">首页</a>
+				</li>
+				<li>
+					<a href="wish-pool">许愿池</a>
+				</li>
+			</ul>
+		</div>
+		<div class="op-nav right">
+			<ul>
+				<li class="make-wish">
+					<a href="/wish/add" class="">许愿</a>
+				</li>
+				<li class="notification">
+					<a href="/notifacation" class="">通知 <span class="bubble dis">0</span></a>
+					<div class="dis notifacation-panel dis">
+						<ul class="notifacation-list">
+							
+						</ul>
+						<a href="" class="a-btn">我知道啦</a>
+						<a href="" class="a-btn">看全部</a>
+					</div>
+				</li>
+				<li class="acount">
+					<div>
+						<ul class="acount-nav">
+							<li>
+								<a class="a-menu-item" href="/people/{{arg['current_user'].uid}}">
+									<img src="" alt="" class="header-avator" />
+								<span>{{arg['current_user'].displayname or arg['current_user'].uniquename or arg['current_user'].email}}</span></a>
+							</li>
+							<li>
+								<a class="a-menu-item"  href="/">愿望</a>
+							</li>
+							<li>
+								<a class="a-menu-item"  href="/setting">设置</a>
+							</li>
+							<li>
+								<a class="a-menu-item"  href="/signout">退出</a>
+							</li>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

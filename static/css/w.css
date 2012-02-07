@@ -1,9 +1,109 @@
-/*reset css*/
+/*reset & base css*/
 *{
 	margin:0;
-	padding:0 ;
-    border: 0;
+	padding:0 ; 
     outline: 0;
     vertical-align: baseline;
     background: transparent;
 }
+
+/*****GenericClasses*****/
+.clear:after {
+content: ".";
+display: block;
+height: 0;
+clear: both;
+visibility: hidden;
+}
+.clear{display: inline-block;}  /* for IE/Mac */
+
+.dis,.todo{
+	display: none;
+} 
+
+/*****BasicElements*****/
+#global-header {
+	border:1px solid #aaa;
+	background:#eee;
+	height:40px;
+	position: fixed;
+	top: 0;
+	width: 100%;
+}
+#global-header>.wrapper {
+}
+#global-header>.wrapper>div, #global-header>div.left {
+	float:left;
+}
+#global-header>.wrapper>div.right {
+	float:right;
+}
+#global-header>.wrapper>div.site-nav>ul>li, #global-header>.wrapper>div.op-nav>ul>li{
+	float: left;
+}
+#global-header li{
+	margin: 10px;
+}
+
+/*****BasicLayout*****/   
+.wrapper {
+	width:1000px;
+	margin:0px auto;
+}
+.page-wrap { 
+	margin-top:40px;
+}
+.page-wrap>.page>.content-wrap>.content>.main{
+	width:660px;
+}
+/*****Header*****/   
+/*****Content*****/   
+/*****Footer*****/   
+
+/*****ui widget*****/
+.input-wrap{
+	
+}
+.input-wrap>.input-icon{
+	
+}
+.input-wrap>label{
+	
+}
+.input-wrap>.tip{
+	
+}
+.input-wrap>.input-text{
+	
+}
+/*buttons*/
+.input-btn{
+	
+}
+.a-btn{
+	
+}
+.form-tip{
+	display:none;
+}
+/* button */
+/*  */	
+/**************** pages *****************/
+/*start page */
+#start-page{
+	background: url('/static/img/start-bg.png');
+}
+#logo{
+	text-indent: -9999px;
+	background: url('/static/img/logo.png');
+}
+/**************** modules *****************/
+.wish-entry-wrap {
+	
+}
+.wish-entry-wrap>.entry-thumnail>img {
+	width:200px;
+	float:right;
+}
+
+ 

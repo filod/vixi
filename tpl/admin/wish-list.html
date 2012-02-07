@@ -1,0 +1,44 @@
+<!-- 用户管理 -->
+{% extends "base-admin.html" %}
+{% autoescape xhtml_escape %}
+{% block page %}
+<div class="page">
+	<div class="clear">
+		{% include "module-pagination.html" %}
+		{% include "module-search.html" %}
+	</div>
+	<table border="1">
+		<tr>
+			<th>wid </th>
+			<th>uid </th>
+			<th>title </th>
+			<th>content </th>
+			<th>poster </th>
+			<th>ctime </th>
+			<th>stat </th>
+			<th>is_public </th>
+			<th>is_anonymous </th>
+			<th>bless_count </th>
+			<th>follow_count </th>
+			<th>操作</th>
+		</tr>
+		{% for wish in arg['data'] %}
+		<tr>
+			<td>{{wish.wid   		}}</td>
+			<td>{{wish.uid    		}}</td>
+			<td>{{wish.title  		}}</td>
+			<td>{{wish.content 	}}</td>
+			<td>{{wish.poster 		}}</td>			
+			{% import util %}
+			<td>{{util.timeformat(wish.ctime ,long=True) }}</td>
+			<td>{{wish.stat   		}}</td>
+			<td>{{wish.is_public   }}</td>
+			<td>{{wish.is_anonymous}}</td>
+			<td>{{wish.bless_count }}</td>
+			<td>{{wish.follow_count}}</td>
+			<td class="admin-op"><a href="/admin/wish/list?op=delete&wid={{wish.wid}}">删</a></td>
+		</tr>
+		{% end %}
+	</table>
+</div>
+{% end %}

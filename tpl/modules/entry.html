@@ -1,0 +1,24 @@
+{% import util %}
+<div class="wish-entry-wrap clear">
+	<div class="entry-title">
+		<h2><a href="/wish/xxx">愿望标题</a></h2>
+	</div>
+	<div class="entry-meta">
+		<span class="time">{{ util.timeformat(wish.ctime)	}}</span>
+		<span class="author"><a href="/people/xxx">filod</a></span>
+	</div>
+	<div class="entry-thumnail">
+		<img src="{{ wish.poster or static_url('img/no-poster.jpg') }}" alt="" />
+	</div>
+	<div class="entry-content">
+		<p>
+			{{wish.content 	}}
+		</p>
+	</div>
+	<div class="entry-util">
+		<span class="follow dis"><a href="">关注</a></span>
+		<span class="comment"><a href="">评论</a></span>
+		<span class="attend dis"><a href="">帮他实现愿望！</a></span>
+<!-- 		comment-box -->
+	</div>
+</div>

@@ -1,0 +1,24 @@
+<script type="text/javascript" charset="utf-8">
+	$(function() {
+		$('#pagination>input').val($.query.get('pn')||1);
+		$('#pagination>a.prev').click(function() {
+			var pn = ($.query.get('pn') || 1 ); 
+			location.search = $.query.set('pn', --pn).toString();
+		});
+		$('#pagination>a.next').click(function() {
+			var pn = ($.query.get('pn') || 1 );
+			location.search = $.query.set('pn', ++pn).toString();
+		});
+		$('#pagination>button').click(function() {
+			location.search = $.query.set('pn', ($('#pagination>input').val() || 1) ).toString();
+		});
+	});
+</script>
+<div id="pagination" class="pagination clear">
+	<a href="javascript:void(0)" class="prev">上一页</a>
+	<a href="javascript:void(0)" class="next">下一页</a>
+	<input type="text" value="" />
+	<button>
+		转到
+	</button>
+</div>

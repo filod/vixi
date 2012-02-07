@@ -1,0 +1,34 @@
+<!-- 添加用户 -->
+{% extends "base-admin.html" %}
+
+
+{% block page %}
+<div class="page">
+	<form action="/admin/user/add" method="post">
+		<table>
+			<tr>
+				<td>email <span class="r">*</span></td>
+				<td><input type="text" name="email" /></td>
+			</tr>
+			<tr>
+				<td>password</td>
+				<td><input type="text" name="password" /></td>
+			</tr>
+			<tr>
+				<td>displayname</td>
+				<td><input type="text" name="displayname" /></td>
+			</tr>
+			<tr>
+				<td>uniquename</td>
+				<td><input type="text" name="uniquename" /></td>
+			</tr>
+			<tr>
+				<td>mtype</td>
+				<td><input type="text" name="mtype" /><span>admin | user |superadmin </span></td>
+			</tr>
+		</table>
+    {{ xsrf_form_html() }}
+    	<input type="submit" value="提交" />
+	</form>
+</div>
+{% end %}

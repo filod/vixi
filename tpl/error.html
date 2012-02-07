@@ -1,0 +1,70 @@
+<html>
+<head>
+<title>Arse!! An error happened! ({{ status_code }})</title>
+<link href='http://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
+<style>
+body {
+    background:#0000aa;
+    color:#ffffff;
+    font-family:'VT323', courier;
+    font-size:15pt;
+    text-align:center;
+    margin:100px;
+}
+
+blink {
+    color:yellow;
+}
+
+.neg {
+    background:#fff;
+    color:#0000aa;
+    padding:2px 8px;
+    font-weight:bold;
+}
+
+p {
+    margin:30px 100px;
+    text-align:left;
+}
+
+a,a:hover {
+    color:inherit;
+    font:inherit;
+}
+
+.menu {
+    text-align:center;
+    margin-top:50px;
+}
+</style>
+</head>
+<body>
+<span class="neg">ERROR {{ status_code }} - NOT COOL!</span>
+
+<p>
+{% if status_code >= 500 %}
+服务器挂了。。。
+{% else %}
+  {% if status_code == 404 %}
+  啥也没有
+  {% else %}
+    {{ err_value }}
+
+  {% end %}
+
+{% end %}
+</p>
+
+
+
+
+<p>
+*  .<br>
+
+*  
+</p>
+Press any <a href="\">link</a> to continue <blink>_</blink>
+
+</body>
+</html>
