@@ -1,14 +1,15 @@
 <script type="text/javascript" charset="utf-8">
 	$(function() {
-		$('#search-box>input').val($.query.get('q'));
-		$('#search-box>button').click(function() {
-			location.search = $.query.set('s', ($('#search-box>input').val()) ).toString();
+		$('#search-box input').val($.query.get('q'));
+		$('#search-box button').click(function() {
+			location.search = $.query.set('s', ($('#search-box input').val()) ).toString();
 		});
 	});
 </script>
-<div id="search-box" class="search-box clear">
-	<input type="text" placeholder="{{arg['search-placeholder']}}" value="" />
-	<button>
+<div id="search-box" class="span4 offset4 search-box">
+	<div class="form-search well">
+	<input type="text" class="search-query" placeholder="{{arg['search-placeholder']}}" value="" />
+	<button class="btn btn-primary">
 		搜索
-	</button>
+	</button></div>
 </div>

@@ -1,5 +1,6 @@
-#Tue Feb 07 23:15:49 CST 2012
+#Tue Feb 07 23:47:07 CST 2012
 eclipse.preferences.version=1
+encoding//test/test-code.py=utf-8
 encoding//test/test-data.py=utf-8
 encoding/admin.py=utf-8
 encoding/base.py=utf-8

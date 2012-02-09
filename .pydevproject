@@ -9,5 +9,6 @@
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">C:\Python27\python.exe</pydev_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
 <path>C:\Python27\Lib\site-packages\tornado-utils</path>
+<path>C:\Python27\Lib\site-packages\validictory-0.8.0-py2.7.egg</path>
 </pydev_pathproperty>
 </pydev_project>

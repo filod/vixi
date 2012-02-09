@@ -9,12 +9,18 @@
 		<link rel="shortcut icon" href="/static/img/favicon.ico" />
 		<link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png" />
 		<title>{title}</title>
-		<link rel="stylesheet" href="{{ static_url("css/w.css") }}" type="text/css"/>
+		<!-- <link rel="stylesheet" href="{{ static_url("css/w.css") }}" type="text/css"/> -->
+		<link rel="stylesheet" href="{{ static_url('css/bootstrap.css') }}" type="text/css"/>
+		<link rel="stylesheet" href="{{ static_url('css/bootstrap-responsive.css') }}" type="text/css"/>
+		<link rel="stylesheet" href="{{ static_url('css/w.css') }}" type="text/css"/>
+		<script type="text/javascript" src="{{ static_url('js/lib/jquery.js') }}" charset="utf-8"></script>
+		<script type="text/javascript" src="{{ static_url('js/lib/bootstrap.js') }}" charset="utf-8"></script>
+		<script type="text/javascript" src="{{ static_url('js/w.js') }}" charset="utf-8"></script>
 		{% block head %}{% end %}
 	</head>
 	<body>
+		<div class="container">
 		{% include 'modules\global-header.html' %}
-		<div class="wrapper">
 			<div class="page-wrap">
 				{% block page %}{% end %}
 			</div>

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import models
+from validictory import validate
 from base import BaseHandler
 from tornado_utils.routes import route
 from sqlalchemy import or_
@@ -45,7 +46,7 @@ class UserAdminHandler(BaseHandler):
         arg = {
                'data' : q,
                'title' : "用户管理",
-               'search-placeholder' :'email or displayname or uniquename'
+               'search-placeholder' :'email | displayname | uniquename'
         }
         self.render('admin/user-list.html',arg=arg)
 
@@ -121,11 +122,9 @@ class NoteAdminHandler(BaseHandler):
         else :
             q = self.session.query(models.Wish)[(pn-1)*25:pn*25]
         arg = {
-               'data' : q,
-               'title' : "愿望管理",
-               'search-placeholder' :'uid '
+               'title' : "通知管理"
         }
-        self.render('admin/wish-list.html',arg=arg)
+        self.render('admin/note.html',arg=arg)
         
 @route(r'(/admin/comment/?)|(/admin/comment/list)')
 class CommentAdminHandler(BaseHandler):

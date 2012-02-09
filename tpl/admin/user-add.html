@@ -4,31 +4,43 @@
 <!-- 添加用户 -->
 {% block page %}
 <div class="page">
-	<form action="/admin/user/add" method="post">
-		<table>
-			<tr>
-				<td>email <span class="r">*</span></td>
-				<td><input type="text" name="email" /></td>
-			</tr>
-			<tr>
-				<td>password</td>
-				<td><input type="text" name="password" /></td>
-			</tr>
-			<tr>
-				<td>displayname</td>
-				<td><input type="text" name="displayname" /></td>
-			</tr>
-			<tr>
-				<td>uniquename</td>
-				<td><input type="text" name="uniquename" /></td>
-			</tr>
-			<tr>
-				<td>mtype</td>
-				<td><input type="text" name="mtype" /><span>admin | user |superadmin </span></td>
-			</tr>
-		</table>
+	<form class="form-horizontal" action="/admin/user/add" method="post">
+		<fieldset>
+			<div class="control-group">
+				<label for="" class="control-label">email <span class="r">*</span></label>
+				<div class="controls">
+					<input type="text" name="email" />
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="" class="control-label">password </label>
+				<div class="controls">
+					<input type="text" name="password" />
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="" class="control-label">displayname </label>
+				<div class="controls">
+					<input type="text" name="displayname" />
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="" class="control-label">uniquename </label>
+				<div class="controls">
+					<input type="text" name="uniquename" />
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="" class="control-label">mtype </label>
+				<div class="controls">
+					<input type="text" name="mtype" /><span class="help-inline">admin | user |superadmin </span>
+				</div>
+			</div> 
+          <div class="form-actions">
+    			<input type="submit" class="btn btn-large" value="提交" />
+          </div>
+		</fieldset>
     {{ xsrf_form_html() }}
-    	<input type="submit" value="提交" />
 	</form>
 </div>
 {% end %}
