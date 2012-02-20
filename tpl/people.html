@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block page %}
+<div id="home-page" class="page">
+	<div class="content-wrap row">
+		<div class="main span8">
+			<div class="profile row">
+				<div class="face span2">
+					<a href="/people/{{arg['user'].uid}}"><img alt="{{arg['current_user'].displayname or arg['current_user'].uniquename}}" class="" src="{{ arg['current_user'].avatar or '/static/img/no-avatar.jpg' }}" /></a>
+				</div>
+				<div class="detail span6">
+					<h2>{{arg['user'].displayname or arg['user'].uniquename}}</h2>
+				</div>
+			</div>
+			<div class="">
+				<div class="tabbable">
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a href="#1" data-toggle="tab">Ta的动态</a>
+						</li>
+						<li>
+							<a href="#2" data-toggle="tab">还没实现的</a>
+						</li>
+						<li>
+							<a href="#3" data-toggle="tab">已经实现的</a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="1">
+							<ul class="timeline-list">
+								{% for wish in arg['data'] %}
+								<li>
+									{{ modules.Entry(wish,poster=False) }}
+								</li>
+								{% end %}
+							</ul>
+						</div>
+						<div class="tab-pane" id="2"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{{ modules.Aside(page='people',user=arg['user']) }}
+	</div>
+</div>
+{% end %}

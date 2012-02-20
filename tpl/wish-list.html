@@ -3,39 +3,33 @@
 		<div class="content">
 			<div class="main">
 				<div class="wish-list-wrap">
-					<div id="tabs" class="tab">
-						<ul>
+					<div id="tabs" class="tabbable tab">
+						<ul class="nav nav-tabs">
 							<li>
-								<a href="#tabs-1">提到我的愿望</a>
+								<a href="#1">提到我的愿望</a>
 							</li>
 							<li>
-								<a href="#tabs-2">我许下的愿望</a>
+								<a href="#2">我许下的愿望</a>
 							</li>
 							<li>
-								<a href="#tabs-3">我关注的愿望</a>
+								<a href="#3">我关注的愿望</a>
 							</li>
-						</ul>
-						<div id="tabs-1">
-							<ul class="wish-list">
-								<li>
-									<!--TODO ajax wish-entry-wrap -->
-								</li>
-							</ul>
-						</div>
-						<div id="tabs-2">
-							<ul class="wish-list">
-								<li>
-									<!--TODO ajax wish-entry-wrap -->
-								</li>
-							</ul>
-						</div>
-						<div id="tabs-3">
-							<ul class="wish-list">
-								<li>
-									<!--TODO ajax wish-entry-wrap -->
-								</li>
-							</ul>
-						</div>
+						</ul> 
+							<div class="tab-pane active" id="1">
+								<ul class="timeline-list">
+									{% for wish in arg['data'] %}
+									<li>
+										{{ modules.Entry(wish,poster=False) }}
+									</li>
+									{% end %}
+								</ul>
+							</div>
+							<div class="tab-pane" id="2">
+								
+							</div> 
+							<div class="tab-pane" id="3">
+								
+							</div> 
 					</div>
 				</div>
 			</div>

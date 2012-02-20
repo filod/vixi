@@ -13,8 +13,7 @@
 		<tr>
 			<th>wid </th>
 			<th>uid </th>
-			<th>title </th>
-			<th>content </th>
+			<th>title </th> 
 			<th>poster </th>
 			<th>ctime </th>
 			<th>stat </th>
@@ -22,22 +21,27 @@
 			<th>is_anonymous </th>
 			<th>bless_count </th>
 			<th>follow_count </th>
+			<th>tag </th>
 			<th>操作</th>
 		</tr>
+		{% import util %}
 		{% for wish in arg['data'] %}
 		<tr>
 			<td>{{wish.wid   		}}</td>
-			<td>{{wish.uid    		}}</td>
-			<td>{{wish.title  		}}</td>
-			<td>{{wish.content 	}}</td>
+			<td><a href="/people/{{wish.uid }}" target="_blank"> {{wish.uid}} </a></td>  
+			<td><a href="/wish/{{wish.wid}}" target="_blank">{{wish.title}}</a></td> 
 			<td>{{wish.poster 		}}</td>			
-			{% import util %}
-			<td>{{util.timeformat(wish.ctime ,long=True) }}</td>
+			<td>{{util.timeformat(wish.ctime ,long_form=True) }}</td>
 			<td>{{wish.stat   		}}</td>
 			<td>{{wish.is_public   }}</td>
 			<td>{{wish.is_anonymous}}</td>
 			<td>{{wish.bless_count }}</td>
 			<td>{{wish.follow_count}}</td>
+			<td>
+			{% for item in wish.tags %}
+				<a href="/tag/{{item}}">{{item}}</a>
+			{% end %}
+			</td>
 			<td class="admin-op"><a class="btn btn-mini btn-danger" title="删除" href="/admin/wish/list?op=delete&wid={{wish.wid}}"><i class="icon-white icon-remove"></i></a></td>
 		</tr>
 		{% end %}

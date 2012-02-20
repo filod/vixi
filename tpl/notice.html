@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block page %}
+<div id="notifacations" class="page">
+	<div class="content-wrap row">
+			<div class="main span8">		
+				<div>
+				<div class="tabbable">
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a href="#1" data-toggle="tab">未读通知<span class="unread-bubble">{{len(arg['unread'])}}</span></a>
+						</li>
+						<li>
+							<a href="#2" data-toggle="tab">全部通知</a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="1">
+							<ul class="">  
+								{% for noti in arg['unread']%}
+									<li>
+										{{noti['who']}} {{noti['op']}} {{noti['target'] or ''}}
+									</li>
+								{% end %}
+							</ul>
+						</div>
+						<div class="tab-pane" id="2">  
+							<ul class="">
+								{% for noti in arg['allnoti']%}
+									<li>
+										{{noti['who']}} {{noti['op']}} {{noti['target'] or ''}}
+									</li>
+								{% end %}
+							</ul>
+						</div>
+					</div>
+				</div>
+				</div>
+			<!-- aside -->
+		</div>
+	</div>
+</div>
+{% end %}

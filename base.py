@@ -6,13 +6,22 @@ from tornado.web import RequestHandler
 from tornado.web import HTTPError
 from config import ret_code_map
 from models import User
+import models
 import util
 from tornado_utils.routes import route
 
 class BaseHandler(RequestHandler):
+    def initialize(self): 
+        self.arg = {
+                    'current_user' : self.current_user
+                    }
+        self.tg = models.TagGraph(self.r)
+        self.ug = models.UserGraph(self.r)
+        self.wg = models.WishGraph(self.r)
+        self.noti = models.Notice(self.r)
     @property
-    def db(self):
-        return self.application.db
+    def r(self): #redis db obj
+        return self.application.r
     @property
     def session(self):
         return self.application.session
@@ -25,10 +34,12 @@ class BaseHandler(RequestHandler):
         if query.count() == 0:
             return None
         return query.one()
+    def is_owner(self,uid):
+        return  self.current_user.uid == uid or self.is_admin()
     def is_admin(self):
         cur = self.get_current_user()
         if(cur) :
-            return cur.mtype == 'admin'
+            return cur.mtype == 'admin' or cur.mtype=='superadmin'
         return False
     def json_write(self,code='0000',data=None,plain=False,jsonp=False):
         '''在采用ajax输出时调用此方法 可以加入logging装饰器TODO 以记录日志 '''

@@ -52,11 +52,11 @@ def wish(i):
     return w
 
 
-#adder([
-#       #[user,10],
-#       [wish,50]
-#    ])
+adder([
+       #[user,10],
+       [wish,10]
+    ])
 
-u = session.query(models.User).all()
-print u
-    
+#u = session.query(models.User).all()
+#print u
+#    

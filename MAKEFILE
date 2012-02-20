@@ -1,0 +1,3 @@
+#some dependencies:
+#easy_install -U celery
+#easy_install -U celery-with-redis

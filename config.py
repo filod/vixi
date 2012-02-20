@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-
+import uimodules
 app_config = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
     'template_path' : os.path.join(os.path.dirname(__file__), 'tpl'), 
@@ -8,7 +8,10 @@ app_config = {
     "login_url": "/signin",
     "xsrf_cookies": False,
     'debug' : True,
-    'autoescape' : None
+    'autoescape' : None,
+    'ui_modules': {"Entry": uimodules.EntryModule,
+                   'Aside': uimodules.AsideModule
+                   },
 }
 mysql_config = {
     'mysql_host' : 'localhost:3306', 
@@ -30,11 +33,19 @@ ret_code_map = {
                 '6': {'ret':'6','req_stat':'done','res_stat':'success','msg':u'注册成功，已经自动登录','data':None},
                 '7': {'ret':'7','req_stat':'done','res_stat':'success','msg':u'添加用户成功','data':None},
                 #通用：
-                '000' : {'ret':'000','req_stat':'fail','res_stat':'success','msg':u'参数错误','data':None},
-                '001' : {'ret':'001','req_stat':'done','res_stat':'success','msg':u'常规数据：timeline','data':None},
-                
+                '000' : {'ret':'000','req_stat':'fail','res_stat':'success','msg':u'提交参数错误','data':None},
+                '001' : {'ret':'001','req_stat':'done','res_stat':'success','msg':u'常规数据返回：user timeline','data':None},
+                '002' : {'ret':'002','req_stat':'done','res_stat':'success','msg':u'操作成功','data':None},
+                '003' : {'ret':'003','req_stat':'done','res_stat':'failure','msg':u'操作失败','data':None},
+                '004' : {'ret':'004','req_stat':'fail','res_stat':'failure','msg':u'请求错误','data':None},
+                #愿望相关：
+                '100' : {'ret':'100','req_stat':'done','res_stat':'success','msg':u'保存愿望成功','data':None},
+                '101' : {'ret':'101','req_stat':'done','res_stat':'failure','msg':u'保存愿望失败：未找到该愿望','data':None},
+                '102' : {'ret':'102','req_stat':'done','res_stat':'failure','msg':u'保存愿望失败','data':None},
+                '103' : {'ret':'103','req_stat':'done','res_stat':'success','msg':u'添加评论成功','data':None},
+                #关系：
                 #其他：
-                '0000': {'ret':'000','req_stat':'done','res_stat':'success','msg':u'未知错误'}
+                '0000': {'ret':'0000','req_stat':'fail','res_stat':'failure','msg':u'未知错误'}
                 
                 }
 

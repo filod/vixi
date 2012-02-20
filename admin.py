@@ -5,8 +5,16 @@ from base import BaseHandler
 from tornado_utils.routes import route
 from sqlalchemy import or_
 import util 
-
-
+import redis
+@route(r'/admin/?')
+class AdminHandler(BaseHandler):
+    @util.admin_authenticated
+    def get(self, *pattern, **kw):
+        arg = {
+               'title':'欢迎！'
+            }
+        self.render('admin/welcome.html',arg=arg)
+        return
 @route(r'/admin/(user|user/list)',name='userlist')
 @route(r'/admin/user/(add)',name='useradd')
 class UserAdminHandler(BaseHandler):
@@ -83,10 +91,12 @@ class UserAdminHandler(BaseHandler):
 
 @route(r'(/admin/wish/?)|(/admin/wish/list)')
 class WishAdminHandler(BaseHandler):
-    def delete(self,wid):
-        w=self.session.query(models.Wish).get(wid)
-        if w:
-            self.session.delete(w)
+    def initialize(self):
+        super(WishAdminHandler,self).initialize()  
+        self.t = models.TagGraph(self.r)
+    def delete(self,wish):
+        if wish:
+            self.session.delete(wish)
             self.session.commit()
         return
     @util.admin_authenticated
@@ -96,11 +106,15 @@ class WishAdminHandler(BaseHandler):
         s = self.get_argument('s', default=None)
         wid = self.get_argument('wid',default=None)
         if hasattr(self, op) and wid:
-            getattr(self, op)(wid)
+            w=self.session.query(models.Wish).get(wid)
+            getattr(self, op)(w)
         if s : 
             q = self.session.query(models.Wish).filter(models.Wish.uid==s)[(pn-1)*25:pn*25]
         else :
             q = self.session.query(models.Wish)[(pn-1)*25:pn*25]
+        for wish in q:
+            tags = self.t.get_tags(wish.wid)
+            setattr(wish,'tags',tags)
         arg = {
                'data' : q,
                'title' : "愿望管理",
@@ -111,16 +125,6 @@ class WishAdminHandler(BaseHandler):
 class NoteAdminHandler(BaseHandler):    
     @util.admin_authenticated
     def get(self, *pattern, **kw):
-        op = self.get_argument('op', default='None', strip=True)
-        pn = int(self.get_argument('pn', default=1, strip=True))
-        s = self.get_argument('s', default=None)
-        wid = self.get_argument('wid',default=None)
-        if hasattr(self, op) and wid:
-            getattr(self, op)(wid)
-        if s : 
-            q = self.session.query(models.Wish).filter(models.Wish.uid==s)[(pn-1)*25:pn*25]
-        else :
-            q = self.session.query(models.Wish)[(pn-1)*25:pn*25]
         arg = {
                'title' : "通知管理"
         }
@@ -133,13 +137,6 @@ class CommentAdminHandler(BaseHandler):
 class SysAdminHandler(BaseHandler):
     
     pass
-@route(r'/admin/?')
-class AdminHandler(BaseHandler):
-    @util.admin_authenticated
-    def get(self, *pattern, **kw):
-        arg = {
-               'title':'欢迎！'
-            }
-        self.render('admin/welcome.html',arg=arg)
-        return
 
+
+    

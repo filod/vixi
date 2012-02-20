@@ -1,24 +1,30 @@
 {% import util %}
 <div class="wish-entry-wrap clear">
 	<div class="entry-title">
-		<h2><a href="/wish/xxx">愿望标题</a></h2>
+		<h2><a href="/wish/{{wish.wid}}">{{wish.title if wish.title else '<span class="">没有标题的愿望</span>'}}</a></h2>
 	</div>
 	<div class="entry-meta">
 		<span class="time">{{ util.timeformat(wish.ctime)	}}</span>
-		<span class="author"><a href="/people/xxx">filod</a></span>
+		<span class="author"><a href="/people/{{wish.uid}}">{{wish.username}}</a></span>
+		{{'标签：' if wish.tags else ''}}
+		{% for tag in wish.tags %}
+		<span class='tag'><a href="/tag/{{tag}}">{{tag}}</a></span>
+		{% end %}
 	</div>
-	<div class="entry-thumnail">
+	
+	<div class="entry-thumnail {{'dis' if not poster else ''}}">
 		<img src="{{ wish.poster or static_url('img/no-poster.jpg') }}" alt="" />
 	</div>
 	<div class="entry-content">
 		<p>
-			{{wish.content 	}}
+			{{wish.content if wish.content else '<span class="info">这家伙太懒了，连愿望内容都没写</span>'	}}
 		</p>
 	</div>
 	<div class="entry-util">
-		<span class="follow dis"><a href="">关注</a></span>
+		<span class="follow dis"><a href="/follow/{{wish.wid}}">关注</a></span>
 		<span class="comment"><a href="">评论</a></span>
 		<span class="attend dis"><a href="">帮他实现愿望！</a></span>
+		{{ '<span class=""><a href="/wish/make/%s">编辑</a></span>'%wish.wid if wish.editable else '' }}
 <!-- 		comment-box -->
 	</div>
 </div>

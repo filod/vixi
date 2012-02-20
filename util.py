@@ -6,11 +6,18 @@ import functools
 import urlparse
 import urllib
 from tornado.web import HTTPError 
+def fetch_str(strObj):
+    if strObj == None:
+        return ''
+    else :
+        return strObj
 def now():
     return long(time.time()*1000)
 
-def timeformat(ctime,long=False):
-    if long :
+def timeformat(ctime,long_form=False):
+    if not ctime:
+        return 'no time'
+    if long_form :
         return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(ctime/1000))
     return time.strftime('%Y-%m-%d',time.localtime(ctime/1000))
 
@@ -54,3 +61,9 @@ def not_authenticated(method):
         else :
             return method(self, *args, **kwargs) 
     return wrapper
+
+
+#常见正则表达式
+class REGEX():
+    url = '^[a-zA-Z]+://(\w+(-\w+)*)(\.(\w+(-\w+)*))*(\?\s*)?$'
+         

@@ -1,0 +1,12 @@
+[class^="icon-large-"] {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  vertical-align: text-top;
+  background-repeat: no-repeat;
+  *margin-right: .3em;
+}
+.icon-large-settings{
+	background-image: url(../img/glyphicons_280_settings.png);
+	/*background-position: 14px 14px;*/
+}

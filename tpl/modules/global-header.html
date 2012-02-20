@@ -9,35 +9,44 @@
 					<a href="/">首页</a>
 				</li>
 				<li class="pop-tip">
-					<a href="wish-pool">许愿池</a>
+					<a href="/wish-pool">许愿池</a>
 				</li>
 			</ul>
 			<div class="op-nav">
 				<ul class="nav pull-right" >
 					<li class="make-wish">
-						<a href="/wish/add" class="">许愿</a>
+						<a href="/wish/make" class="">许愿</a>
 					</li>
 					<li id='global-notifacation' class="notification pop-tip">
-						<a href="javascript:void(0)" class=""><i class="icon-white icon-envelope"></i> 通知 <span class="bubble dis">0</span></a>
+						<a href="/notice" class=""><i class="icon-white icon-envelope"></i> 通知 <span class="bubble dis">0</span></a>
 					</li>
-					<li class="acount dropdown">
-						<a class="a-menu-item dropdown-toggle" data-toggle="dropdown" href="#"> <b class="caret"></b> 
-							<img width="12px" height="12px" src="" alt="" class="header-avator" /> <span>{{arg['current_user'].displayname or arg['current_user'].uniquename or arg['current_user'].email}}</span></a>
+					<li class="acount dropdown"> 
+						<a class="a-menu-item dropdown-toggle" data-toggle="dropdown" href="#"> 							
+							<b class="caret"></b> 
+							<span>
+								 {{arg['current_user'].displayname or arg['current_user'].uniquename or arg['current_user'].email}}
+							</span></a>
 						<ul class="dropdown-menu acount-nav">
 							<li class="dropdown">
-								<a class="a-menu-item" href="/people/{{arg['current_user'].uid}}"> <img src="" alt="" class="header-avator" /> <span>{{arg['current_user'].displayname or arg['current_user'].uniquename or arg['current_user'].email}}</span></a>
+								<a class="a-menu-item" href="/people/{{arg['current_user'].uid}}">
+								<img alt="{{arg['current_user'].displayname or arg['current_user'].uniquename}}" class="header-avator" src="{{ arg['current_user'].avatar or '/static/img/no-avatar.jpg' }}" />
+								个人主页</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a class="a-menu-item"  href="/wish/list">愿望清单</a>
 							</li>
 							<li>
-								<a class="a-menu-item"  href="/">愿望</a>
+								<a class="a-menu-item"  href="/settings">设置</a>
 							</li>
-							<li>
-								<a class="a-menu-item"  href="/setting">设置</a>
-							</li>
+							<li class="divider"></li>
 							<li>
 								<a class="a-menu-item"  href="/signout">退出</a>
 							</li>
 						</ul>
 					</li>
+					<li>
+						</li>
 				</ul>
 			</div>
 		</div>

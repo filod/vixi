@@ -1,100 +1,175 @@
+{% extends "base.html" %} <!-- 用户管理 -->
+{% block head %} <script type="text/javascript" src="{{ static_url('js/lib/jquery.textext.js') }}" charset="utf-8"></script>
+<script type="text/javascript">
+	$(function() {
+		$('#tag-txt').textext({
+			plugins : 'tags prompt focus',
+			tagsItems : {{arg['tags']}},
+			prompt : '输入后按回车添加标签',
+			ajax : {
+				url : '/manual/examples/data.json',
+				dataType : 'json',
+				cacheResults : true
+			}
+		});
+	});
+
+</script>
+{% end %}
+{% block page %}
+{% import util %}
 <div id="make-wish-page" class="page">
-	<div class="content-wrap">
-		<div class="content">
+	<div class="content-wrap row">
+		<div class="content span8">
 			<div class="main">
-				<form action="/wish/add" method="post">
-					<div class="wizard">
-						<div class="step-indicator">
-							<ol>
-								<li class="step-info complete">
-									<div>
-										<h3>1. 写下愿望</h3>
-										<p>
-											你的愿望是什么？
-										</p>
+				<!-- 
+				<div class="tabbable">
+				<ul class="nav nav-tabs">
+				<li class="active"><a href="#1" data-toggle="tab">Section 1</a></li>
+				<li><a href="#2" data-toggle="tab">Section 2</a></li>
+				</ul>
+				<div class="tab-content">
+				<div class="tab-pane active" id="1">
+				<p>I'm in Section 1.</p>
+				</div>
+				<div class="tab-pane" id="2">
+				<p>Howdy, I'm in Section 2.</p>
+				</div>
+				</div>
+				</div> -->
+				<div class="wizard tabbable">
+					<ol class="nav nav-tabs">
+						<li class="step-info active complete">
+							<div>
+								<h3>写下愿望</h3>
+								<p>
+									你的愿望是什么？
+								</p>
+							</div>
+						</li>
+						<li class="step-info cur">
+							<div>
+								<h3>2. 愿望详情</h3>
+								<p>
+									还差一点哦~加油
+								</p>
+							</div>
+						</li>
+						<li class="step-info last">
+							<div>
+								<h3>完成</h3>
+								<p>
+									快快完成和好友分享~ (*^__^*)
+								</p>
+							</div>
+						</li>
+					</ol>
+					<div class="tab-content">
+						<form action="/wish/make" method="post" class="form-horizontal">
+							<fieldset>
+								<div class="step step-1 tab-pane active" id='1'>
+									<div class="control-group">
+										<label class="control-label" for=""><span class="required">*</span>标题：</label>
+										<div class="controls">
+											<input placeholder="标题" value="{{util.fetch_str(arg['wish'].title)}}" name="title" id="" class="input-text" type="" />
+											<div class="help-block form-tip" >
+												起个吸引眼球的标题吧！
+											</div>
+										</div>
 									</div>
-								</li>
-								<li class="step-info cur">
-									<div>
-										<h3>2. 愿望详情</h3>
-										<p>
-											还差一点哦~加油
-										</p>
+									<div  class="control-group">
+										<label for="content">愿望内容 ：</label>
+										<div class="controls">
+											<textarea name="content" id="content" class="editor">
+												{{util.fetch_str(arg['wish'].content)}}
+											</textarea>
+											<div class="help-block form-tip" >
+												真诚的愿望内容能得到更多网友的祝福哟！
+											</div>
+										</div>
 									</div>
-								</li>
-								<li class="step-info last">
-									<div>
-										<h3>3. 完成</h3>
-										<p>
-											快快完成和好友分享~ (*^__^*)
-										</p>
-									</div>
-								</li>
-							</ol>
-						</div>
-						<div class="step step-1">
-							<div class="form-block">
-								<div>
-									<label for=""><span class="required">*</span>标题：</label>
-									<input placeholder="起个醒目的标题吧！" id="" class="input-text" type="" />
-									<div class="form-tip dis" >
-										吸引眼球的标题能得到更多网友的祝福哟！
+									<div  class="control-group">
+										<label for="">选项：</label>
+										<div class="controls">
+											<label for="is-public" class="checkbox">
+												<input type="checkbox" id="is-public" name="is_public" checked="checked" />
+												公开心愿？</label>
+											<p class="form-tip help-block " >
+												公开愿望意味着所有网友都能看到你的愿望内容，否则只有你自己（包括你选择的好友）能看到。
+												匿名后您的名字将不会暴露，同时也会自动公开愿望内容。
+											</p>
+											<label for="is-anonymous" class="checkbox">
+												<input type="checkbox" id="is-anonymous" name="is_anonymous"   />
+												匿名发布？</label>
+										</div>
 									</div>
 								</div>
-								<div>
-									<label for="content">愿望内容 </label>
-									<textarea name="content" id="content" cols="30" rows="10" class="editor"></textarea>
-									<div class="form-tip dis" >
-										吸引眼球的标题能得到更多网友的祝福哟！
+							</fieldset>
+							<fieldset class="">
+								<div class="step step-2" >
+									<div class="control-group">
+										<label>上传海报 ： </label>
+										<div class="controls">
+											<input type="text" name="poster" />
+											<div class="help-block form-tip" >
+												如果是发起一个活动的话，怎能没有海报招揽顾客呢？
+											</div>
+										</div>
+									</div>
+									<div class="control-group">
+										<label>请人帮忙 ： </label>
+										<div class="controls">
+											<textarea name="content" id="content" class="editor">
+											</textarea>
+											<div class="help-block form-tip" >
+												选择好友
+											</div>
+										</div>
+									</div>
+									<div class="control-group">
+										<label >打几个标签 ：</label>
+										<div class="controls">
+											<textarea class="span4" name="tags" id="tag-txt"></textarea>
+											<div class="help-block form-tip" >
+												打几个标签
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-							<div  class="form-block">
-								<div>
-									<input type="checkbox" id="is-public" name="is-public" checked="checked"   />
-									<label for="is-public">公开心愿？</label>
-									<input type="checkbox" id="is-anonymous" name="is-anonymous" />
-									<label for="is-anonymous">匿名发布？</label>
-									<div class="form-tip dis" >
-										公开愿望意味着所有网友都能看到你的愿望内容，否则只有你自己（包括你选择的好友）能看到。
-										匿名后您的名字将不会暴露，同时也会自动公开愿望内容。
+							</fieldset>
+							<fieldset>
+								<div class="step step-3">
+									<div class="finishing">
+										<div >
+											<img class="thumbnail"  src="/static/img/finish-pic.pn" alt="" class="finish-pic" />
+										</div>
+										<div class="control-group">
+											<label for="">分享：</label>
+											<div class="controls">
+												<label class="checkbox">
+													<input type="checkbox" id="is-share" name="is_share" />
+													同时分享到微博并@你的好友，让它们看看你的愿望 </label>
+											</div>
+										</div>
 									</div>
 								</div>
+							</fieldset>
+							<div class="form-actions wizard-panel">
+								<span><a href="" class="prev">上一步</a></span>
+								<span class=" todo"><a href="" class="save">保存草稿</a></span>
+								<span><a href="" class="next">下一步</a></span>
+								<span>
+									<input type="submit" value="提交" class="btn btn-primary btn-large" />
+								</span>
 							</div>
-						</div>
-						<div class="step step-2 dis">
-							<div class="form-block">
-								<input type="file" name="poster" />
-							</div>
-							<div class="form-block">
-								<!-- 请人帮忙 ：
-								TODO -->
-								<input type="hidden" class="" name="atwho" />
-							</div>
-							<div class="form-block">
-								<!-- 打几个标签：
-								TODO -->
-								<input type="hidden" name='tags' />
-							</div>
-						</div>
-						<div class="step step-3 dis">
-							<div class="finishing">
-								<div>
-									<img src="/static/img/finish-pic.png" alt="" class="finish-pic" />
-								</div>
-								<input type="checkbox" id="is-share" name="is-share" />
-								<label for="content">同时分享到微博并@你的好友，让它们看看你的愿望 </label>
-							</div>
-						</div>
-						<div class="wizard-panel">
-							<span><a href="" class="prev">上一步</a></span>
-							<span class=" todo"><a href="" class="save">保存草稿</a></span>
-							<span><a href="" class="next">下一步</a></span>
-						</div>
+							<input type="hidden" name="wid" value="{{arg['wish'].wid}}" />
+   							{{ xsrf_form_html() }}
+						</form>
 					</div>
-				</form>
+				</div>
 			</div>
 			<!--aside -->
 		</div>
 	</div>
 </div>
+{% end %} 

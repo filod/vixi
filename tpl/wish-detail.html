@@ -1,12 +1,15 @@
+{% extends "base.html" %}
+{% block page %}
 <div id="wish-detail" class="page">
 	<div class="content-wrap">
-		<div class="content">
-			<div class="main">
-				<!-- wish-entry -->
-				<!-- comment-list -->
-				<!-- comment-box -->
+		<div class="content row">
+			<div class="main span8">
+				{{ modules.Entry(wish=arg['wish']) }} 
+				<div class="comment-list-wrap"  data-wid="{{arg['wish'].wid}}" ></div><!-- comment-list -->
+				{% include 'modules/comment-box.html' %} <!-- comment-box -->
 			</div>
-			<!-- aside -->
+			{{ modules.Aside(page='wish',wish=arg['wish']) }}
 		</div>
 	</div>
 </div>
+{% end %}

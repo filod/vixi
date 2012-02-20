@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-<!-- 用户管理 -->
 {% block page %}
 <div id="home-page" class="page">
 	<div class="content-wrap row">
@@ -12,7 +11,7 @@
 								
 							{% for wish in arg['data'] %}
 							<li>
-								{% module Template('modules/entry.html', wish=wish) %}
+								{{ modules.Entry(wish) }}
 							</li>
 							{% end %}
 						</ul>

@@ -4,8 +4,9 @@ import tornado.ioloop
 import tornado.httpserver
 
 from db import ConnectDB
+from db import ConnectRDB
 from config import app_config
-from tornado_utils.routes import route   
+from tornado_utils.routes import route
 #handler module
 import base
 import handlers
@@ -44,6 +45,7 @@ class Application(tornado.web.Application):
         settings = app_config
         tornado.web.Application.__init__(self, routed_handlers, **settings)
         self.session = ConnectDB()
+        self.r = ConnectRDB()
 
 if __name__ == '__main__':
     http_server = tornado.httpserver.HTTPServer(Application())
