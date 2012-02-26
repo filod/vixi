@@ -1,8 +1,8 @@
 /**
  * jQuery TextExt Plugin
- * http://alexgorbatchev.com/textext
+ * http://textextjs.com
  *
- * @version 1.2.0
+ * @version 1.3.0
  * @copyright Copyright (C) 2011 Alex Gorbatchev. All rights reserved.
  * @license MIT License
  */
@@ -802,7 +802,9 @@
 			if(plugin)
 			{
 				self._plugins[name] = plugin = new plugin();
-				self[name] = function() { return plugin; };
+				self[name] = (function(plugin) { 
+				  return function(){ return plugin; } 
+				})(plugin);
 				initList.push(plugin);
 				$.extend(true, plugin, self.opts(OPT_EXT + '.*'), self.opts(OPT_EXT + '.' + name));
 			}
@@ -1076,7 +1078,7 @@
 	p.getFormData = function(keyCode)
 	{
 		var self = this,
-			data = self.getWeightedEventResponse(EVENT_GET_FORM_DATA, keyCode)
+			data = self.getWeightedEventResponse(EVENT_GET_FORM_DATA, keyCode || 0)
 			;
 
 		self.trigger(EVENT_SET_FORM_DATA  , data['form']);
@@ -1613,9 +1615,9 @@
 
 /**
  * jQuery TextExt Plugin
- * http://alexgorbatchev.com/textext
+ * http://textextjs.com
  *
- * @version 1.2.0
+ * @version 1.3.0
  * @copyright Copyright (C) 2011 Alex Gorbatchev. All rights reserved.
  * @license MIT License
  */
@@ -1967,9 +1969,9 @@
 })(jQuery);
 /**
  * jQuery TextExt Plugin
- * http://alexgorbatchev.com/textext
+ * http://textextjs.com
  *
- * @version 1.2.0
+ * @version 1.3.0
  * @copyright Copyright (C) 2011 Alex Gorbatchev. All rights reserved.
  * @license MIT License
  */
@@ -2073,9 +2075,9 @@
 })(jQuery);
 /**
  * jQuery TextExt Plugin
- * http://alexgorbatchev.com/textext
+ * http://textextjs.com
  *
- * @version 1.2.0
+ * @version 1.3.0
  * @copyright Copyright (C) 2011 Alex Gorbatchev. All rights reserved.
  * @license MIT License
  */
@@ -2102,6 +2104,8 @@
 		CSS_DOT_SELECTED   = CSS_DOT + CSS_SELECTED,
 		CSS_SUGGESTION     = 'text-suggestion',
 		CSS_DOT_SUGGESTION = CSS_DOT + CSS_SUGGESTION,
+		CSS_LABEL          = 'text-label',
+		CSS_DOT_LABEL      = CSS_DOT + CSS_LABEL,
 
 		/**
 		 * Autocomplete plugin options are grouped under `autocomplete` when passed to the 
@@ -2299,6 +2303,8 @@
 
 		POSITION_ABOVE = 'above',
 		POSITION_BELOW = 'below',
+		
+		DATA_MOUSEDOWN_ON_AUTOCOMPLETE = 'mousedownOnAutocomplete',
 
 		DEFAULT_OPTS = {
 			autocomplete : {
@@ -2364,6 +2370,7 @@
 
 			self.on(container, {
 				mouseover : self.onMouseOver,
+				mousedown : self.onMouseDown,
 				click     : self.onClick
 			});
 
@@ -2373,6 +2380,12 @@
 				;
 
 			$(self).data('container', container);
+			
+			$(document.body).click(function(e) 
+			{
+				if (self.isDropdownVisible() && !self.withinWrapElement(e.target))
+					self.trigger(EVENT_HIDE_DROPDOWN);
+			});
 
 			self.positionDropdown();
 		}
@@ -2418,7 +2431,23 @@
 			target.addClass(CSS_SELECTED);
 		}
 	};
-
+	
+	/**
+	 * Reacts to the `mouseDown` event triggered by the TextExt core.
+	 *
+	 * @signature TextExtAutocomplete.onMouseDown(e)
+	 *
+	 * @param e {Object} jQuery event.
+	 *
+	 * @author adamayres
+	 * @date 2012/01/13
+	 * @id TextExtAutocomplete.onMouseDown
+	 */
+	p.onMouseDown = function(e)
+	{
+		this.containerElement().data(DATA_MOUSEDOWN_ON_AUTOCOMPLETE, true);
+	};
+	
 	/**
 	 * Reacts to the `click` event triggered by the TextExt core.
 	 *
@@ -2436,8 +2465,11 @@
 			target = $(e.target)
 			;
 
-		if(target.is(CSS_DOT_SUGGESTION))
-			self.selectFromDropdown();
+		if(target.is(CSS_DOT_SUGGESTION) || target.is(CSS_DOT_LABEL))
+			self.trigger('enterKeyPress');
+		
+		if (self.core().hasPlugin('tags'))
+			self.val('');
 	};
 
 	/**
@@ -2453,12 +2485,18 @@
 	 */
 	p.onBlur = function(e)
 	{
-		var self = this;
+		var self              = this,
+			container         = self.containerElement(),
+			isBlurByMousedown = container.data(DATA_MOUSEDOWN_ON_AUTOCOMPLETE) === true
+			;
 
-		// use timeout here so that onClick has a chance to fire because if
-		// dropdown is hidden when clicked, onClick doesn't fire
+		// only trigger a close event if the blur event was 
+		// not triggered by a mousedown event on the autocomplete
+		// otherwise set focus back back on the input
 		if(self.isDropdownVisible())
-			setTimeout(function() { self.trigger(EVENT_HIDE_DROPDOWN) }, 100);
+			isBlurByMousedown ? self.core().focusInput() : self.trigger(EVENT_HIDE_DROPDOWN);
+				
+		container.removeData(DATA_MOUSEDOWN_ON_AUTOCOMPLETE);
 	};
 
 	/**
@@ -2757,7 +2795,7 @@
 	 * @author agorbatchev
 	 * @date 2011/12/27
 	 * @id TextExtAutocomplete.onToggleDropdown
-	 * @version 1.1
+	 * @version 1.1.0
 	 */
 	p.onToggleDropdown = function(e)
 	{
@@ -3122,17 +3160,34 @@
 		if(suggestion)
 		{
 			self.val(self.itemManager().itemToString(suggestion));
-			self.core().getFormData();
+			self.core().getFormData();	
 		}
 
 		self.trigger(EVENT_HIDE_DROPDOWN);
 	};
+	
+	/**
+	 * Determines if the specified HTML element is within the TextExt core wrap HTML element.
+	 *
+	 * @signature TextExtAutocomplete.withinWrapElement(element)
+	 *
+	 * @param element {HTMLElement} element to check if contained by wrap element
+	 *
+	 * @author adamayres
+	 * @version 1.3.0
+	 * @date 2012/01/15
+	 * @id TextExtAutocomplete.withinWrapElement
+	 */
+	p.withinWrapElement = function(element) 
+	{
+		return this.core().wrapElement().find(element).size() > 0;
+	}
 })(jQuery);
 /**
  * jQuery TextExt Plugin
- * http://alexgorbatchev.com/textext
+ * http://textextjs.com
  *
- * @version 1.2.0
+ * @version 1.3.0
  * @copyright Copyright (C) 2011 Alex Gorbatchev. All rights reserved.
  * @license MIT License
  */
@@ -3372,9 +3427,9 @@
 })(jQuery);
 /**
  * jQuery TextExt Plugin
- * http://alexgorbatchev.com/textext
+ * http://textextjs.com
  *
- * @version 1.2.0
+ * @version 1.3.0
  * @copyright Copyright (C) 2011 Alex Gorbatchev. All rights reserved.
  * @license MIT License
  */
@@ -3546,9 +3601,9 @@
 })(jQuery);
 /**
  * jQuery TextExt Plugin
- * http://alexgorbatchev.com/textext
+ * http://textextjs.com
  *
- * @version 1.2.0
+ * @version 1.3.0
  * @copyright Copyright (C) 2011 Alex Gorbatchev. All rights reserved.
  * @license MIT License
  */
@@ -3655,8 +3710,10 @@
 	 */
 	p.init = function(core)
 	{
-		var self = this,
-			container
+		var self           = this,
+			placeholderKey = 'placeholder',
+			container,
+			prompt
 			;
 
 		self.baseInit(core, DEFAULT_OPTS);
@@ -3667,7 +3724,18 @@
 		self.core().wrapElement().append(container);
 		self.setPrompt(self.opts(OPT_PROMPT));
 		
-		if(self.val().length > 0)
+		prompt = core.input().attr(placeholderKey);
+
+		if(!prompt)
+			prompt = self.opts(OPT_PROMPT);
+
+		// clear placeholder attribute if set
+		core.input().attr(placeholderKey, '');
+
+		if(prompt)
+			self.setPrompt(prompt);
+
+		if($.trim(self.val()).length > 0)
 			self.hidePrompt();
 
 		self.on({
@@ -3754,8 +3822,7 @@
 
 		self.startTimer('prompt', 0.1, function()
 		{
-			if(self.val().length === 0)
-				self.showPrompt();
+			self.showPrompt();
 		});
 	};
 
@@ -3770,7 +3837,12 @@
 	 */
 	p.showPrompt = function()
 	{
-		this.containerElement().removeClass(CSS_HIDE_PROMPT);
+		var self     = this,
+			input    = self.input()
+			;
+		
+		if($.trim(self.val()).length === 0 && !input.is(':focus'))
+			self.containerElement().removeClass(CSS_HIDE_PROMPT);
 	};
 
 	/**
@@ -3838,9 +3910,9 @@
 })(jQuery);
 /**
  * jQuery TextExt Plugin
- * http://alexgorbatchev.com/textext
+ * http://textextjs.com
  *
- * @version 1.2.0
+ * @version 1.3.0
  * @copyright Copyright (C) 2011 Alex Gorbatchev. All rights reserved.
  * @license MIT License
  */
@@ -4013,18 +4085,18 @@
 })(jQuery);
 /**
  * jQuery TextExt Plugin
- * http://alexgorbatchev.com/textext
+ * http://textextjs.com
  *
- * @version 1.2.0
+ * @version 1.3.0
  * @copyright Copyright (C) 2011 Alex Gorbatchev. All rights reserved.
  * @license MIT License
  */
 (function($)
 {
 	/**
-	 * Tags plugin brings in the traditional tag functionality where user can assemble and 
+	 * Tags plugin brings in the traditional tag functionality where user can assemble and
 	 * edit list of tags. Tags plugin works especially well together with Autocomplete, Filter,
-	 * Suggestions and Ajax plugins to provide full spectrum of features. It can also work on 
+	 * Suggestions and Ajax plugins to provide full spectrum of features. It can also work on
 	 * its own and just do one thing -- tags.
 	 *
 	 * @author agorbatchev
@@ -4045,9 +4117,13 @@
 		CSS_DOT_TAG         = CSS_DOT + CSS_TAG,
 		CSS_TAGS            = 'text-tags',
 		CSS_DOT_TAGS        = CSS_DOT + CSS_TAGS,
+		CSS_LABEL           = 'text-label',
+		CSS_DOT_LABEL       = CSS_DOT + CSS_LABEL,
+		CSS_REMOVE          = 'text-remove',
+		CSS_DOT_REMOVE      = CSS_DOT + CSS_REMOVE,
 
 		/**
-		 * Tags plugin options are grouped under `tags` when passed to the 
+		 * Tags plugin options are grouped under `tags` when passed to the
 		 * `$().textext()` function. For example:
 		 *
 		 *     $('textarea').textext({
@@ -4086,7 +4162,7 @@
 		 * @id TextExtTags.options.tags.items
 		 */
 		OPT_ITEMS = 'tags.items',
-		
+
 		/**
 		 * HTML source that is used to generate a single tag.
 		 *
@@ -4097,7 +4173,7 @@
 		 * @id TextExtTags.options.html.tag
 		 */
 		OPT_HTML_TAG  = 'html.tag',
-		
+
 		/**
 		 * HTML source that is used to generate container for the tags.
 		 *
@@ -4136,6 +4212,35 @@
 		 * @id TextExtTags.events.isTagAllowed
 		 */
 		EVENT_IS_TAG_ALLOWED = 'isTagAllowed',
+
+		/**
+		 * Tags plugin triggers the `tagClick` event when user clicks on one of the tags. This allows to process
+		 * the click and potentially change the value of the tag (for example in case of user feedback).
+		 *
+		 *     $('textarea').textext({...}).bind('tagClick', function(e, tag, value, callback)
+		 *     {
+		 *         var newValue = window.prompt('New value', value);
+
+		 *         if(newValue)
+		 *             callback(newValue, true);
+		 *     })
+		 *
+		 *  Callback argument has the following signature:
+		 *
+		 *     function(newValue, refocus)
+		 *     {
+		 *         ...
+		 *     }
+		 *
+		 * Please check out [example](/manual/examples/tags-changing.html).
+		 *
+		 * @name tagClick
+		 * @version 1.3.0
+		 * @author s.stok
+		 * @date 2011/01/23
+		 * @id TextExtTags.events.tagClick
+		 */
+		EVENT_TAG_CLICK = 'tagClick',
 
 		DEFAULT_OPTS = {
 			tags : {
@@ -4195,7 +4300,7 @@
 			});
 		}
 
-		self._originalPadding = { 
+		self._originalPadding = {
 			left : parseInt(input.css('paddingLeft') || 0),
 			top  : parseInt(input.css('paddingTop') || 0)
 		};
@@ -4224,7 +4329,7 @@
 
 	//--------------------------------------------------------------------------------
 	// Event handlers
-	
+
 	/**
 	 * Reacts to the `postInit` event triggered by the core and sets default tags
 	 * if any were specified.
@@ -4245,7 +4350,7 @@
 
 	/**
 	 * Reacts to the [`getFormData`][1] event triggered by the core. Returns data with the
-	 * weight of 200 to be *greater than the Autocomplete plugin* data weight. The weights 
+	 * weight of 200 to be *greater than the Autocomplete plugin* data weight. The weights
 	 * system is covered in greater detail in the [`getFormData`][1] event documentation.
 	 *
 	 * [1]: /manual/textext.html#getformdata
@@ -4325,7 +4430,7 @@
 	};
 
 	/**
-	 * Reacts to the `backspaceKeyDown` event. When backspace key is pressed in an empty text field, 
+	 * Reacts to the `backspaceKeyDown` event. When backspace key is pressed in an empty text field,
 	 * deletes last tag from the list.
 	 *
 	 * @signature TextExtTags.onBackspaceKeyDown(e)
@@ -4349,7 +4454,7 @@
 	/**
 	 * Reacts to the `preInvalidate` event and updates the input box to look like the tags are
 	 * positioned inside it.
-	 * 
+	 *
 	 * @signature TextExtTags.onPreInvalidate(e)
 	 *
 	 * @param e {Object} jQuery event.
@@ -4364,7 +4469,7 @@
 			lastTag = self.tagElements().last(),
 			pos     = lastTag.position()
 			;
-		
+
 		if(lastTag.length > 0)
 			pos.left += lastTag.innerWidth();
 		else
@@ -4392,22 +4497,42 @@
 	p.onClick = function(e)
 	{
 		var self   = this,
+			core   = self.core(),
 			source = $(e.target),
-			focus  = 0
+			focus  = 0,
+			tag
 			;
 
 		if(source.is(CSS_DOT_TAGS))
 		{
 			focus = 1;
 		}
-		else if(source.is('.text-remove'))
+		else if(source.is(CSS_DOT_REMOVE))
 		{
 			self.removeTag(source.parents(CSS_DOT_TAG + ':first'));
 			focus = 1;
 		}
+		else if(source.is(CSS_DOT_LABEL))
+		{
+			tag = source.parents(CSS_DOT_TAG + ':first');
+			self.trigger(EVENT_TAG_CLICK, tag, tag.data(CSS_TAG), tagClickCallback);
+		}
+
+		function tagClickCallback(newValue, refocus)
+		{
+			tag.data(CSS_TAG, newValue);
+			tag.find(CSS_DOT_LABEL).text(self.itemManager().itemToString(newValue));
+
+			self.updateFormCache();
+			core.getFormData();
+			core.invalidateBounds();
+
+			if(refocus)
+				core.focusInput();
+		}
 
 		if(focus)
-			self.core().focusInput();
+			core.focusInput();
 	};
 
 	/**
@@ -4471,7 +4596,7 @@
 	 * any of the tags, the tags container is sent under the text area. If cursor
 	 * is over any of the tags, the tag container is brought to be over the text
 	 * area.
-	 * 
+	 *
 	 * @signature TextExtTags.toggleZIndex(e)
 	 *
 	 * @param e {Object} jQuery event.
@@ -4572,7 +4697,7 @@
 	 *
 	 * @signature TextExtTags.getTagElement(tag)
 	 *
-	 * @param tag {Object} Tag object in the format that current `ItemManager` can understand. 
+	 * @param tag {Object} Tag object in the format that current `ItemManager` can understand.
 	 * Default is `String`.
 
 	 * @author agorbatchev
@@ -4596,7 +4721,7 @@
 	 *
 	 * @signature TextExtTags.removeTag(tag)
 	 *
-	 * @param tag {Object} Tag object in the format that current `ItemManager` can understand. 
+	 * @param tag {Object} Tag object in the format that current `ItemManager` can understand.
 	 * Default is `String`.
 	 *
 	 * @author agorbatchev
@@ -4631,7 +4756,7 @@
 	 *
 	 * @signature TextExtTags.renderTag(tag)
 	 *
-	 * @param tag {Object} Tag object in the format that current `ItemManager` can understand. 
+	 * @param tag {Object} Tag object in the format that current `ItemManager` can understand.
 	 * Default is `String`.
 	 *
 	 * @author agorbatchev
@@ -4651,10 +4776,10 @@
 })(jQuery);
 ;$.fn.textext.css = '.text-core {\n\
   position: relative;\n\
-  background: #fff;\n\
 }\n\
 .text-core .text-wrap {\n\
   position: absolute;\n\
+  background: #fff;\n\
 }\n\
 .text-core .text-wrap textarea,\n\
 .text-core .text-wrap input {\n\

@@ -15,31 +15,55 @@
 				<div class="tabbable">
 					<ul class="nav nav-tabs">
 						<li class="active">
-							<a href="#1" data-toggle="tab">Ta的动态</a>
+							<a href="#1" data-toggle="tab">动态</a>
 						</li>
 						<li>
-							<a href="#2" data-toggle="tab">还没实现的</a>
+							<a href="#2" data-toggle="tab">公开的愿望</a>
+						</li><!--
+						<li>
+						<a href="#2" data-toggle="tab">还没实现的</a>
 						</li>
 						<li>
-							<a href="#3" data-toggle="tab">已经实现的</a>
-						</li>
+						<a href="#3" data-toggle="tab">已经实现的</a>
+						</li> -->
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="1">
-							<ul class="timeline-list">
-								{% for wish in arg['data'] %}
+							<ul class="">
+								TODO 动态
+							</ul>
+						</div>
+						<div class="tab-pane" id="2">
+							<ul class="">
+								{% for wish in arg['public'] %}
 								<li>
 									{{ modules.Entry(wish,poster=False) }}
 								</li>
 								{% end %}
 							</ul>
-						</div>
-						<div class="tab-pane" id="2"></div>
+						</div><!--
+						<div class="tab-pane" id="3"></div>
+						<div class="tab-pane" id="4"></div> -->
 					</div>
 				</div>
 			</div>
 		</div>
 		{{ modules.Aside(page='people',user=arg['user']) }}
+		<div class="modal dis" id="msg-modal">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>给 {{arg['user'].displayname }} 发送私信</h3>
+			</div>
+			<div class="modal-body">
+				<p>
+					<textarea name="content" id="msg-content" ></textarea>
+				</p>
+			</div>
+			<div class="modal-footer">
+				<span class="send-status"></span>
+				<button data-uid="{{arg['user'].uid}}" href="javascript:;" id="do-send-message" class="btn btn-primary">发送</button>
+				<button href="javascript:;" data-dismiss="modal" class="btn">关闭</button></div>
+		</div>
 	</div>
 </div>
 {% end %}

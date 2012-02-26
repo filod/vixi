@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block page %}
+{% import util %}
 <div id="notifacations" class="page">
 	<div class="content-wrap row">
 			<div class="main span8">		
@@ -7,7 +8,7 @@
 				<div class="tabbable">
 					<ul class="nav nav-tabs">
 						<li class="active">
-							<a href="#1" data-toggle="tab">未读通知<span class="unread-bubble">{{len(arg['unread'])}}</span></a>
+							<a href="#1" data-toggle="tab">未读通知 <span class="bubble bubble-light">{{ arg['count']  if arg['count'] < 99 else '99+'}}</span></a>
 						</li>
 						<li>
 							<a href="#2" data-toggle="tab">全部通知</a>
@@ -15,13 +16,19 @@
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="1">
-							<ul class="">  
-								{% for noti in arg['unread']%}
-									<li>
-										{{noti['who']}} {{noti['op']}} {{noti['target'] or ''}}
-									</li>
-								{% end %}
-							</ul>
+							<div>
+								<button id='clear-notice' class="clear-notice btn btn-large {{'disabled' if arg['count']==0 else ''}}" {{'disabled' if arg['count']==0 else ''}}>清空未读通知</button>
+							</div>
+							<div class="">
+								<ul class="notice-list">
+									{{'没有未读通知，你可以<a href="#2">查看全部通知</a>' if arg['count']==0 else ''}}  
+									{% for noti in arg['unread']%}
+										<li>
+											{{noti['who']}} {{noti['op']}} {{noti['target'] or ''}} <span>{{ util.timeformat(noti['ctime'])}}</span> <a rel="tooltip" data-uuid="{{noti['uuid']}}"  title="知道啦" href="javascript:;" class="iknow tip"><i class="icon-minus"></i></a>
+										</li>
+									{% end %}
+								</ul>
+							</div>
 						</div>
 						<div class="tab-pane" id="2">  
 							<ul class="">

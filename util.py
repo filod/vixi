@@ -17,6 +17,7 @@ def now():
 def timeformat(ctime,long_form=False):
     if not ctime:
         return 'no time'
+    ctime = int(ctime)
     if long_form :
         return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(ctime/1000))
     return time.strftime('%Y-%m-%d',time.localtime(ctime/1000))

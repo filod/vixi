@@ -1,5 +1,9 @@
 <div class="comment-wrap">
-	<div class="comment-area"><textarea name="content" id="comment-box"  ></textarea></div>
+	<div class="comment-area">
+		<textarea name="content" id="comment-box"  ></textarea>
+		<input name="reply_uid" id="reply_uid" type="hidden" />
+		<input name="reply_cid" id="reply_cid" type="hidden" />
+	</div>
 	<div class="comment-util">
 		<span><input type="button" class="btn btn-primary do-comment" data-wid="{{arg['wish'].wid}}" value="发表评论" /></span>
 		<span><input type="button" class="btn close-comment" value="关闭" /></span>

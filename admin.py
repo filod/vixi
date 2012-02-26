@@ -122,9 +122,35 @@ class WishAdminHandler(BaseHandler):
         }
         self.render('admin/wish-list.html',arg=arg)
 @route(r'/admin/note')
-class NoteAdminHandler(BaseHandler):    
+class NoteAdminHandler(BaseHandler):   
+    def get_username(self,uid):
+        u = self.session.query(models.User).get(uid)
+        return u.displayname or u.uniquename
+    @util.admin_authenticated
+    def post(self, *pattern, **kw):
+        try:
+            import string
+            uids = string.split(self.get_argument('uids'),',')
+            uids = [int(uid) for uid in uids]
+            content = self.get_argument('content')
+            import re
+            r = re.compile('{.*}')
+            for uid in uids:
+                def get_uname(*l,**kw):
+                    return self.get_username(uid)
+                self.noti.add_notice(uid, {
+                                           'type' : 'sys',
+                                           'content':r.sub(get_uname,content),
+                                           'fuid' : 0,
+                                           'fid' : 0 ,
+                                           'toid' : 0
+                                           })
+            self.alert('发送通知成功！')
+        except:
+            self.alert('发送通知失败！')
     @util.admin_authenticated
     def get(self, *pattern, **kw):
+        
         arg = {
                'title' : "通知管理"
         }

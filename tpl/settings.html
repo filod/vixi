@@ -1,104 +1,103 @@
+{% extends "base.html" %}
+{% block page %}
 <div id="settings" class="page">
-	<div class="content-wrap">
+	<div class="content-wrap row">
 		<div class="content">
-			<div class="main">
-				<div class="wish-list-wrap">
-					<div id="tabs" class="tab">
-						<ul>
-							<li>
-								<a href="#tabs-1">基本资料</a>
+			<div class="main span8">
+				<div class="">
+					<div id="tabs" class="tab tabbable">
+						<ul class="nav nav-tabs">
+							<li class="active">
+								<a href="#1" data-toggle="tab">基本资料</a>
 							</li>
 							<li>
-								<a href="#tabs-2">邮件设置</a>
+								<a href="#2" data-toggle="tab">邮件设置</a>
 							</li>
 							<li>
-								<a href="#tabs-3">修改密码</a>
+								<a href="#3" data-toggle="tab">私信设置</a>
+							</li>
+							<li>
+								<a href="#4" data-toggle="tab">修改密码</a>
 							</li>
 						</ul>
-						<div id="tabs-1">
-							<form action="/settings/profile">
-								<div class="form-block">
-									<dl>
-										<dt></dt>
-										<dd><img class="xdv" src="http://p1.zhimg.com/05/f4/05f451da1_l.jpg" />
-										</dd>
-										<dt>
-											<label for="nickname">昵称：</label>
-										</dt>
-										<dd>
-											<input type="text" class="input-text" id="nickname" />
-										</dd>
-									</dl>
-								</div>
-								<div>
-									<input type="submit" class="input-button" value="保存设置" />
-								</div>
-							</form>
-						</div>
-						<div id="tabs-2">
-							<form action="/settings/email">
-								<div class="form-block">
-									<h3 class="setting-title">给我发送邮件……，</h3>
-									<div>
-										<input type="checkbox" id="when-follow-me" name="when-follow-me" />
-										<label for="when-follow-me">当有人关注我时</label>
+						<div class="tab-content">
+							<div id="1"  class="tab-pane active" >
+								<form action="/settings/profile" class="form-horizontal">
+									<div class="control-group">
+										<label>上传头像：</label>
+										<div class="controls">
+											<img class="xdv" src="http://p1.zhimg.com/05/f4/05f451da1_l.jpg" />
+											<input type="file" class="input-text" name="nickname" />
+										</div>
 									</div>
-									<div>
-										<input type="checkbox" id="when-atme" name="when-atme" />
-										<label for="when-atme">当有愿望提到我时</label>
+									<div  class="control-group">
+										<label>昵称：</label>
+										<div class="controls">
+											<input type="text" class="input-text" name="nickname" />
+										</div>
 									</div>
-									<div>
-										<input type="checkbox" id="when-help-you" name="when-help-you" />
-										<label for="when-help-you">当我许的愿有人愿意帮你实现时</label>
+									<div class="form-actions">
+										<input type="submit" class="btn btn-primary  input-button" value="保存设置" />
 									</div>
-									<div>
-										<input type="checkbox" id="when-msg" name="when-atme" />
-										<label for="when-msg">当有人给我说悄悄话时</label>
+								</form>
+							</div>
+							<div id="2"  class="tab-pane" >
+								<form action="/settings/email" class="form-horizontal">
+									<div class="control-group">
+										<label for="">给我发送邮件……</label>
+										<div class="controls">
+											<label  class="checkbox"  for="when-follow-me">
+												<input type="checkbox"id="when-follow-me" name="when-follow-me" />
+												当有人关注我时</label>
+											<label class="checkbox"  for="when-atme">
+												<input type="checkbox" class="" id="when-atme" name="when-atme" />
+												当有愿望提到我时</label>
+											<label class="checkbox"  for="when-help-you">
+												<input type="checkbox"class="" id="when-help-you" name="when-help-you" />
+												当我许的愿有人愿意帮你实现时</label>
+											<label  class="checkbox" for="when-msg">
+												<input type="checkbox"class="" id="when-msg" name="when-atme" />
+												当有人给我发送私信时</label>
+										</div>
 									</div>
-								</div>
-								<div class="form-block">
-									<h3 class="setting-title">设置谁可以给我说悄悄话……</h3>
-									<div>
-										<input type="radio" checked="checked" id="all" name="msg" value="all" />
-										<label for="all">所有人</label>
-										<input type="radio" id="only-i-follow" name="msg" value="follow" />
-										<label for="only-i-follow">仅我关注的人</label>
+									<div class="form-actions">
+										<input type="submit" class="btn btn-primary input-button" value="保存设置" />
 									</div>
-								</div>
-								<div>
-									<input type="submit" class="input-button" value="保存设置" />
-								</div>
-							</form>
-						</div>
-						<div id="tabs-3">
-							<form action="/settings/account">
-								<div class="form-block">
-									<dl class=" ">
-										<dt class="">
-											<label class="" for="cur-passwd">当前密码：</label>
-										</dt>
-										<dd class="">
-											<input id="cur-passwd" class="xuk" type="password" name="op">
-										</dd>
-										<dt class="">
-											<label class="" for="new-passwd">新密码：</label>
-										</dt>
-										<dd class="xtk">
-											<input id="new-passwd" class="xuk" type="password" name="np">
-										</dd>
-										<div class="xm"></div>
-										<dt class="xwk xvk">
-											<label class="" for="new-passwd">确认密码：</label>
-										</dt>
-										<dd class="xtk">
-											<input id="cnf-passwd" class="input-text required" type="password" name="rp">
-										</dd>
-									</dl>
-								</div>
-								<div>
-									<input type="submit" class="input-button" value="保存设置" />
-								</div>
-							</form>
+								</form>
+							</div>
+							<div id="3" class="tab-pane">
+								<form action="/settings/message" class="form-horizontal">
+									<div  class="control-group">
+										<label for="">谁可以给我发送私信</label>
+										<div class="controls">
+											<label class="radio" for="all"><input type="radio" checked="checked" id="all" name="msg" value="all" />所有人</label>
+											<label class="radio" for="only-i-follow"><input type="radio" id="only-i-follow" name="msg" value="follow" />仅我关注的人</label>
+										</div>
+									</div>
+									<div class="form-actions">
+										<input type="submit" class="btn btn-primary input-button" value="保存设置" />
+									</div>
+								</form>
+							</div>
+							<div id="4" class="tab-pane">
+								<form action="/settings/account"  class="form-horizontal">
+									<div class="control-group">
+										<label for="">当前密码：</label>
+										<div class="controls"><input id="cur-passwd" class="xuk" type="password" name="op"></div>
+									</div>
+									<div class="control-group">
+										<label for="">新密码：</label>
+										<div class="controls"><input id="new-passwd" class="xuk" type="password" name="np"></div>
+									</div>
+									<div class="control-group">
+										<label for="">确认密码：</label>
+										<div class="controls"><input id="cnf-passwd" class="input-text required" type="password" name="rp"></div>
+									</div>
+									<div class="form-actions">
+										<input type="submit" class="btn btn-primary input-button" value="保存设置" />
+									</div>
+								</form>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -107,3 +106,4 @@
 		</div>
 	</div>
 </div>
+{% end %}

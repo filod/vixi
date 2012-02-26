@@ -1,5 +1,5 @@
 {% import util %}
-<div class="wish-entry-wrap clear">
+<div data-uid="{{wish.uid}}" class="wish-entry-wrap clear">
 	<div class="entry-title">
 		<h2><a href="/wish/{{wish.wid}}">{{wish.title if wish.title else '<span class="">没有标题的愿望</span>'}}</a></h2>
 	</div>
@@ -15,16 +15,20 @@
 	<div class="entry-thumnail {{'dis' if not poster else ''}}">
 		<img src="{{ wish.poster or static_url('img/no-poster.jpg') }}" alt="" />
 	</div>
-	<div class="entry-content">
+	<div class="entry-content {{'dis' if not poster else ''}}">
 		<p>
 			{{wish.content if wish.content else '<span class="info">这家伙太懒了，连愿望内容都没写</span>'	}}
 		</p>
 	</div>
-	<div class="entry-util">
+	<div class="entry-util  {{'dis' if not poster else ''}}">
 		<span class="follow dis"><a href="/follow/{{wish.wid}}">关注</a></span>
 		<span class="comment"><a href="">评论</a></span>
-		<span class="attend dis"><a href="">帮他实现愿望！</a></span>
+		<span class="attend"><a href="">帮他实现愿望！</a></span>
 		{{ '<span class=""><a href="/wish/make/%s">编辑</a></span>'%wish.wid if wish.editable else '' }}
-<!-- 		comment-box -->
 	</div>
+	<div class="entry-vote">
+		<span><button data-toid="{{wish.wid}}"  class="btn {{'' if wish.hasbless else 'btn-danger '}} bless" title="许愿人将收到你的祝福" {{'disabled ' if wish.hasbless else 'data-op="bless"'}} >{{'已祝福' if wish.hasbless else '祝福Ta！'}}  </button><span class="count">{{wish.bless_count}}</span></span>
+		<span><button data-toid="{{wish.wid}}"  class="btn btn-inverse curse" title="诅咒Ta永远不会实现这个愿望，诅咒操作会自动匿名，诅咒可取消" {{'data-op="uncurse"' if wish.hascurse else 'data-op="curse"'}}> {{'取消诅咒' if wish.hascurse else '诅咒Ta…'}} </button><span class="count">{{wish.curse_count}}</span></span>
+	</div>
+	<!-- comment-box -->
 </div>

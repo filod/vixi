@@ -1,5 +1,6 @@
 {% extends "base.html" %} <!-- 用户管理 -->
-{% block head %} <script type="text/javascript" src="{{ static_url('js/lib/jquery.textext.js') }}" charset="utf-8"></script>
+{% block head %} 
+<script type="text/javascript" src="{{ static_url('js/lib/jquery.textext.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
 	$(function() {
 		$('#tag-txt').textext({
@@ -12,8 +13,53 @@
 				cacheResults : true
 			}
 		});
+		var friends = {{ arg['friends'] }}; // [['id',name,avatar ],[xxx]] TODO issue perfomance
+		$('#friends-txt').textext({
+			plugins : 'autocomplete arrow tags',
+			tagsItems : {{arg['atfriends']}}, //TODO
+			prompt : '输入后按回车添加好友',
+			autocomplete : {
+                dropdownMaxHeight : '200px', 
+                render : function( suggestion )
+                {
+                    // `this` refers to the instance of `TextExtAutocomplete`
+                    return '<img width="20px" class="text-label" src="'+ (suggestion[2] || '/static/img/no-avatar.jpg')+'" />'  + suggestion[1];
+                }
+           },
+           // html : {
+           		// suggestion : '<div class="text-suggestion"><span class="text-label"/></div>'
+           // },
+           ext:{
+           	   itemManager : {
+	               itemToString : function(item){
+	               		return item[1];
+	               },
+	               stringToItem : function(str){          		
+	               		var item;
+	               		item =  $('#friends-txt').textext()[0].autocomplete().selectedSuggestionElement().data('text-suggestion');
+						if(item){
+							return item;
+						}
+	               		for(var i = 0 ;i<friends.length;i++){
+	               			if(friends[i][1]===str){
+	               				item = friends[i];
+	               				break;
+	               			}
+	               		}
+	               		return item;
+	               },
+	               itemContains : function(item, needle)
+					{
+						return this.itemToString(item).toLowerCase().indexOf(needle.toLowerCase()) >= 0;
+					}
+	           }
+           }
+		}).on('getSuggestions',function(e,data){
+            textext = $(e.target).textext()[0],
+            query = (data ? data.query : '') || '';
+		 	$(this).trigger('setSuggestions', { result : textext.itemManager().filter(friends, query)});
+		});
 	});
-
 </script>
 {% end %}
 {% block page %}
@@ -92,14 +138,14 @@
 										<label for="">选项：</label>
 										<div class="controls">
 											<label for="is-public" class="checkbox">
-												<input type="checkbox" id="is-public" name="is_public" checked="checked" />
+												<input type="checkbox" id="is-public" name="is_public" {{ 'checked="checked"' if arg['wish'].is_public else '' }} />
 												公开心愿？</label>
 											<p class="form-tip help-block " >
 												公开愿望意味着所有网友都能看到你的愿望内容，否则只有你自己（包括你选择的好友）能看到。
 												匿名后您的名字将不会暴露，同时也会自动公开愿望内容。
 											</p>
 											<label for="is-anonymous" class="checkbox">
-												<input type="checkbox" id="is-anonymous" name="is_anonymous"   />
+												<input type="checkbox" id="is-anonymous" name="is_anonymous" {{ 'checked="checked"' if arg['wish'].is_anonymous else '' }}  />
 												匿名发布？</label>
 										</div>
 									</div>
@@ -119,7 +165,7 @@
 									<div class="control-group">
 										<label>请人帮忙 ： </label>
 										<div class="controls">
-											<textarea name="content" id="content" class="editor">
+											<textarea name="friends" id="friends-txt"  class="editor">
 											</textarea>
 											<div class="help-block form-tip" >
 												选择好友
@@ -141,7 +187,7 @@
 								<div class="step step-3">
 									<div class="finishing">
 										<div >
-											<img class="thumbnail"  src="/static/img/finish-pic.pn" alt="" class="finish-pic" />
+											<img class="thumbnail" width="10px" src="/static/img/finish-pic.png" alt="" class="finish-pic" />
 										</div>
 										<div class="control-group">
 											<label for="">分享：</label>

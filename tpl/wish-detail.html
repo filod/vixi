@@ -4,8 +4,9 @@
 	<div class="content-wrap">
 		<div class="content row">
 			<div class="main span8">
-				{{ modules.Entry(wish=arg['wish']) }} 
-				<div class="comment-list-wrap"  data-wid="{{arg['wish'].wid}}" ></div><!-- comment-list -->
+				{{ modules.Entry(wish=arg['wish']) }}
+				<div class="comment-list-wrap"  data-wid="{{arg['wish'].wid}}" >
+				</div><!-- comment-list -->
 				{% include 'modules/comment-box.html' %} <!-- comment-box -->
 			</div>
 			{{ modules.Aside(page='wish',wish=arg['wish']) }}

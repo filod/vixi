@@ -2,6 +2,55 @@
 
 {% block page %}
 <div class="page">
-	
+	<form class="form-horizontal" action="/admin/note" method="post">
+		<fieldset>
+			<legend>
+				对用户发送系统通知
+			</legend>
+			<div class="control-group">
+				<label for="" class="control-label">用户id<span class="r">*</span></label>
+				<div class="controls">
+					<textarea name="uids">  </textarea>
+					<div class="help-block form-tip" >
+						语法：用户id用小写逗号分割,如：
+						<br />
+						1,2,3
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="" class="control-label">通知内容 <span class="r">*</span></label>
+				<div class="controls">
+					<textarea name="content">  </textarea>
+					<div class="help-block form-tip" >
+						语法：一条典型的通知内容格式如下：
+						<br />
+						<i>hi~ {username}, 您的账号可能存在问题，请联系管理员XXX处理。</i>
+						<br />
+						变量支持列表：
+						<br />
+						{username} ：用户显示名称
+						<br />
+						
+					</div>
+				</div>
+			</div>
+			<div  class="control-group">
+				<label for="">是否以私信方式发送？</label>
+				<div class="controls">
+					<label  class="checkbox">
+						<input type="checkbox"   name="is_message" />
+						以私信</label> 
+					<div class="help-block form-tip" >
+						默认以通知方式发送该消息
+					</div>
+				</div>
+			</div>
+			<div class="form-actions">
+				<input type="submit" class="btn btn-large" value="提交" />
+			</div>
+		</fieldset>
+		{{ xsrf_form_html() }}
+	</form>
 </div>
 {% end %}

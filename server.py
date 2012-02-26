@@ -11,6 +11,7 @@ from tornado_utils.routes import route
 import base
 import handlers
 import admin
+import comet
     
 class Application(tornado.web.Application):
     def __init__(self):

@@ -9,7 +9,7 @@
 					<a href="/">首页</a>
 				</li>
 				<li class="pop-tip">
-					<a href="/wish-pool">许愿池</a>
+					<a href="/wishpool">许愿池</a>
 				</li>
 			</ul>
 			<div class="op-nav">
@@ -17,36 +17,45 @@
 					<li class="make-wish">
 						<a href="/wish/make" class="">许愿</a>
 					</li>
-					<li id='global-notifacation' class="notification pop-tip">
-						<a href="/notice" class=""><i class="icon-white icon-envelope"></i> 通知 <span class="bubble dis">0</span></a>
+					<li id='global-notifacation' class="notification">
+						<a href="/notice" class=""> 通知 <span class="bubble-dark" style="display: none">0</span></a>
+						<div id="notifacation-panel" class="popover dis">
+							<div class="arrow"></div>
+							<div class="popover-inner">
+								<div class="popover-content">
+									<div class="">
+										<p></p>
+										<ul class="notice-list"></ul>
+										<a href="javascript:;" class="clear-notice btn">我知道啦</a>
+										<a href="/notice" class="btn btn-primary">查看全部</a>
+									</div>
+								</div>
+							</div>
+						</div>
 					</li>
-					<li class="acount dropdown"> 
-						<a class="a-menu-item dropdown-toggle" data-toggle="dropdown" href="#"> 							
-							<b class="caret"></b> 
-							<span>
-								 {{arg['current_user'].displayname or arg['current_user'].uniquename or arg['current_user'].email}}
-							</span></a>
+					<li class="acount dropdown">
+						<a class="a-menu-item dropdown-toggle" data-toggle="dropdown" href="#"> <b class="caret"></b> <span> {{arg['current_user'].displayname or arg['current_user'].uniquename or arg['current_user'].email}} </span></a>
 						<ul class="dropdown-menu acount-nav">
 							<li class="dropdown">
-								<a class="a-menu-item" href="/people/{{arg['current_user'].uid}}">
-								<img alt="{{arg['current_user'].displayname or arg['current_user'].uniquename}}" class="header-avator" src="{{ arg['current_user'].avatar or '/static/img/no-avatar.jpg' }}" />
-								个人主页</a>
+								<a class="a-menu-item" href="/people/{{arg['current_user'].uid}}"> <img alt="{{arg['current_user'].displayname or arg['current_user'].uniquename}}" class="header-avatar" src="{{ arg['current_user'].avatar or '/static/img/no-avatar.jpg' }}" /> 个人主页</a>
 							</li>
 							<li class="divider"></li>
 							<li>
-								<a class="a-menu-item"  href="/wish/list">愿望清单</a>
+								<a class="a-menu-item"  href="/wish/list"><i class="icon-list-alt"></i> 愿望清单</a>
 							</li>
 							<li>
-								<a class="a-menu-item"  href="/settings">设置</a>
+								<a class="a-menu-item"  href="/inbox"><i class="icon-envelope"></i> 私信</a>
+							</li>
+							<li>
+								<a class="a-menu-item"  href="/settings"><i class="icon-cog"></i> 设置</a>
 							</li>
 							<li class="divider"></li>
 							<li>
-								<a class="a-menu-item"  href="/signout">退出</a>
+								<a class="a-menu-item"  href="/signout"><i class="icon-off"></i> 退出</a>
 							</li>
 						</ul>
 					</li>
-					<li>
-						</li>
+					<li></li>
 				</ul>
 			</div>
 		</div>

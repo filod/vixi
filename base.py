@@ -17,7 +17,8 @@ class BaseHandler(RequestHandler):
                     }
         self.tg = models.TagGraph(self.r)
         self.ug = models.UserGraph(self.r)
-        self.wg = models.WishGraph(self.r)
+        self.wg = models.WishGraph(self.r) 
+        self.wag = models.WishAtGraph(self.r)
         self.noti = models.Notice(self.r)
     @property
     def r(self): #redis db obj
@@ -43,9 +44,8 @@ class BaseHandler(RequestHandler):
         return False
     def json_write(self,code='0000',data=None,plain=False,jsonp=False):
         '''在采用ajax输出时调用此方法 可以加入logging装饰器TODO 以记录日志 '''
-        #some logging        
-        if not data:
-            ret_code_map[code]['data'] = data
+        #some logging       
+        ret_code_map[code]['data'] = data
         if plain : 
             self.set_header("Content-Type", "text/plain;charset=UTF-8")
         else:

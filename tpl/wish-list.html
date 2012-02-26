@@ -1,35 +1,49 @@
+{% extends "base.html" %}
+{% block page %}
 <div id="wish-list-pool" class="page">
-	<div class="content-wrap">
-		<div class="content">
-			<div class="main">
-				<div class="wish-list-wrap">
-					<div id="tabs" class="tabbable tab">
-						<ul class="nav nav-tabs">
-							<li>
-								<a href="#1">提到我的愿望</a>
-							</li>
-							<li>
-								<a href="#2">我许下的愿望</a>
-							</li>
-							<li>
-								<a href="#3">我关注的愿望</a>
-							</li>
-						</ul> 
-							<div class="tab-pane active" id="1">
-								<ul class="timeline-list">
-									{% for wish in arg['data'] %}
-									<li>
-										{{ modules.Entry(wish,poster=False) }}
-									</li>
-									{% end %}
-								</ul>
-							</div>
-							<div class="tab-pane" id="2">
-								
-							</div> 
-							<div class="tab-pane" id="3">
-								
-							</div> 
+	<div class="content-wrap row">
+		<div class="main span8">
+			<div class="wish-list-wrap">
+				<div id="tabs" class="tabbable">
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a href="#1"data-toggle="tab">提到我的愿望</a>
+						</li>
+						<li>
+							<a href="#2" data-toggle="tab">我许下的愿望</a>
+						</li>
+						<li>
+							<a href="#3" data-toggle="tab">我关注的愿望</a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="1">
+							<ul class="">
+								{% for wish in arg['atme'] %}
+								<li>
+									{{ modules.Entry(wish,poster=False) }}
+								</li>
+								{% end %}
+							</ul>
+						</div>
+						<div class="tab-pane" id="2">
+							<ul class="">
+								{% for wish in arg['iwish'] %}
+								<li>
+									{{ modules.Entry(wish,poster=False) }}
+								</li>
+								{% end %}
+							</ul>
+						</div>
+						<div class="tab-pane" id="3">
+							<ul class="">
+								{% for wish in arg['ifollow'] %}
+								<li>
+									{{ modules.Entry(wish,poster=False) }}
+								</li>
+								{% end %}
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -37,3 +51,4 @@
 		</div>
 	</div>
 </div>
+{% end %}

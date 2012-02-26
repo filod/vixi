@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block page %}
+<div id="home-page" class="page">
+	<div class="content-wrap row">
+		<div class="main span8">
+			<h2>本页面是仍在开发中的实验项目，如果你有幸来到此，那么，看看就成，别上心。</h2>
+			<div class="">
+				<div class="tabbable">
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a href="#1" data-toggle="tab">最多被祝福的愿望</a>
+						</li>
+						<li>
+							<a href="#2" data-toggle="tab">最多被诅咒的愿望</a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="1">
+							<ul class="">
+								{% for wish in arg['most-bless'] %}
+								<li>
+									{{ modules.Entry(wish,poster=False,minimize=True) }}
+								</li>
+								{% end %}
+							</ul>
+						</div>
+						<div class="tab-pane" id="2">
+							<ul class="">
+								{% for wish in arg['most-curse'] %}
+								<li>
+									{{ modules.Entry(wish,poster=False) }}
+								</li>
+								{% end %}
+							</ul>
+						</div><!--
+						<div class="tab-pane" id="3"></div>
+						<div class="tab-pane" id="4"></div> -->
+					</div>
+				</div>
+			</div>
+		</div>
+		{{ modules.Aside(page='people',user=arg['user']) }}
+	</div>
+</div>
+{% end %}

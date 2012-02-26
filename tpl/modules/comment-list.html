@@ -14,7 +14,7 @@
 				</p>
 			</div>
 			<div class="entry-util">
-				<a class="reply" href="javascript:;">回复</a>
+				{{'<a data-uid="%s" data-cid="%s" class="reply" href="javascript:;">回复</a>'%(comment.uid, comment.cid)if arg['current_user'].uid != comment.user.uid else '' }}
 			</div>
 		</div>
 	</li>

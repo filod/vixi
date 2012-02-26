@@ -91,5 +91,32 @@
 #print a
 #a= int('a')
 
-a = string.join(['a','b'],'')
-print a
+#a = string.join(['a','b'],'')
+#print a
+#import db
+#r = db.ConnectRDB()
+#a = r.get('sadfas')
+#print int(a)
+#print a
+#import re
+#a = '{uid}aaaa'
+#def rep(*l,**kw):
+#    print l
+#    return 'asdf'
+##import string
+##string.replace(a, rep , 'aha')
+#r = re.compile('{.+}')
+#print r.sub(rep,a)
+#a = ['1','2']
+#b= [int(i) for i in a]
+#print b
+
+def get_conversation_id(l):
+    l.sort()
+    c = (long(l[0]) << 32) + l[1]
+    return c
+
+print "%x"%get_conversation_id([1,2])
+print "%x"%get_conversation_id([2,1]) 
+print "%x"%get_conversation_id([2,4]) 
+print "%x"%get_conversation_id([4,2])
