@@ -19,18 +19,16 @@
 						</li>
 						<li>
 							<a href="#2" data-toggle="tab">公开的愿望</a>
-						</li><!--
-						<li>
-						<a href="#2" data-toggle="tab">还没实现的</a>
 						</li>
-						<li>
-						<a href="#3" data-toggle="tab">已经实现的</a>
-						</li> -->
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="1">
 							<ul class="">
-								TODO 动态
+								{% for feed in arg['feeds'] %}
+								<li>
+									{{ modules.FeedEntry(feed) }}
+								</li>
+								{% end %}
 							</ul>
 						</div>
 						<div class="tab-pane" id="2">

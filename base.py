@@ -17,8 +17,9 @@ class BaseHandler(RequestHandler):
                     }
         self.tg = models.TagGraph(self.r)
         self.ug = models.UserGraph(self.r)
-        self.wg = models.WishGraph(self.r) 
+        self.wg = models.WishGraph(self.r)
         self.wag = models.WishAtGraph(self.r)
+        self.feed = models.Feed(self.r)
         self.noti = models.Notice(self.r)
     @property
     def r(self): #redis db obj

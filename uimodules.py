@@ -15,6 +15,10 @@ class EntryModule(tornado.web.UIModule):
         setattr(wish,'hascurse',self.handler.wg.is_curse(self.handler.current_user.uid, wish.wid))
         return self.render_string('modules/entry.html',wish=wish,poster=poster,minimize=minimize)
 
+class FeedModule(tornado.web.UIModule):
+    def render(self,feed): 
+        return self.render_string('modules/feed-entry.html',feed=feed)
+
 class CommentModule(tornado.web.UIModule):
     def render(self):
         return self.render_string('modules/')

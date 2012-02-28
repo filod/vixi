@@ -229,8 +229,8 @@ class WishGraph(object):
         follows = self.r.smembers('%s:%s' % (self.FOLLOWS_KEY, user)) 
         return list(follows)
    
-    def get_followers(self, user):
-        followers = self.r.smembers('%s:%s' % (self.FOLLOWERS_KEY, user))
+    def get_followers(self, wid):
+        followers = self.r.smembers('%s:%s' % (self.FOLLOWERS_KEY, wid))
         return list(followers)
     
     def bless(self, from_user, toid):
@@ -415,32 +415,90 @@ class Notice(object):
         return
         
         
-class Timeline(object):
+class Feed(object):
     ''' 
     timeline 内容：
-    1，关注的人 发表了新的愿望 or 关注了别人的愿望 or 诅咒|祝福某愿望 
-    2，关注的愿望 有修改 or 新的评论 
+    1，关注的人 发表了愿望  or 关注了别人的愿望  or  祝福某愿望 
+    2，关注的愿望 有修改  or 新的评论 
     3，关注的tag 有新愿望产生 （第二版 TODO）
     
     redis结构：
-    list ：   存全部动态,5K+条消息后trim  timeline:[uid] content  
+    zset ：  存某人的全部feed,5K+条消息后trim  feed:[uid] content  
     content {
+        'type' : 'xxx'          // new_w | follow_w | bless_w ||||  update_w | comment_w 
+        'actorid' : 123         // 事件发起者id， uid |||| wid
+        'actionid' : 123        // 事件动作id，cid（仅在comment_w存在)
+        'targetid' : 123        // 事件目标id，wid
         
     }
-    
+    zset2 : 存某人的可能造成feed的事件 ，5K+后trim feed.evt:[uid] content
+    zset3 : 存某愿望可能造成feed的时间, 1K+后trim feed.evt.wish:[wid] content
      '''
     def __init__(self,r):
         self.r = r
-        self.NOTI_UUID = 'noti.uuid'
-        self.UNREAD_LIST_KEY = 'unread.notice.id'   #未读通知
-        self.UNREAD_HASH_KEY = 'unread.notice'
-        self.ALL_KEY = 'all.notice'         #全部通知
+        self.wg = WishGraph(self.r)
+        self.ug = UserGraph(self.r)
+        self.FEED_KEY= 'feed:%s' 
+        self.FEED_EVT_KEY = 'feed.evt:%s'
+        self.FEED_EVT_WISH_KEY = 'feed.evt.wish%s'
         
-    def get_timeline(self, uid):
-        
+    def get_feeds(self, uid, until=None , page=1,page_size=50):
+        '''获取某人的feeds，当指定了until的时候仅获取until之后发生的feeds '''
+        if(not until):
+            return self.r.zrevrange(self.FEED_KEY%uid,(page-1)*page_size,page*page_size)
+        else : 
+            return self.r.zrevrangebyscore(self.FEED_KEY%uid,until+1,util.now())
+    def get_feeds_evt(self,uid,page=1,page_size=50):
+        '''获取某人的feeds 事件，目前没有愿望feeds事件获取。'''
+        return self.r.zrevrange(self.FEED_EVT_KEY%uid,(page-1)*page_size,page*page_size)
+    def __add_to_feed(self,uid,content,ctime):
+        ''' 给某人的 feed 添加一条内容  '''
+        self.r.zadd(self.FEED_KEY%uid,content,ctime)
+        self.r.zremrangebyrank(self.FEED_KEY%uid,0,-5000)  #仅保留后5k条
         return
-    def add_to_timeline(self,uid,content):
-        return
-    def build_timeline(self,uid):
-        ''' 重建timeline：关注/取消关注时  '''
+    def __push_to_user_followers(self,uid,content): 
+        '''给某user的所有关注者push feed '''
+        followers = self.ug.get_followers(uid)
+        for uid in followers : 
+            self.__add_to_feed(uid, content,util.now())
         
+    def __push_to_wish_followers(self,wid,content):
+        '''给某wish的所有关注者push feed '''
+        followers = self.wg.get_followers(wid)
+        for uid in followers : 
+            self.__add_to_feed(uid, content,util.now())
+            
+    def add_to_feed_evt(self,uid=None,wid=None,is_wish_evt=False,content=None):
+        ''' 给某人或某愿望的 feed事件 添加一条内容  TODO: 当粉丝规模过大时可能会出现性能问题！'''
+#        isUserEvt =  {
+#        'new_w' : True,
+#        'follow_w' :True,
+#        'bless_w' :True,
+#        'update_w' :False,
+#        'comment_w' :False,
+#         }[content['type']]
+        content_json = json_encode(content)
+        #添加feed事件后同时push给所有的followers。 TODO: 后序可能有重复事件(某wish和某人发出的事件相同)？
+        if is_wish_evt and wid :
+            self.r.zadd(self.FEED_EVT_WISH_KEY%wid,content_json,util.now())
+            self.r.zremrangebyrank(self.FEED_EVT_WISH_KEY%uid,0,-1000)
+            self.__push_to_wish_followers(wid, content_json)
+        else:
+            self.r.zadd(self.FEED_EVT_KEY%uid,content_json,util.now())
+            self.r.zremrangebyrank(self.FEED_EVT_KEY%uid,0,-5000)
+            self.__push_to_user_followers(uid, content_json)
+        
+    
+    def build_feed(self,uid):
+        ''' 重建feed 列表：关注/取消关注时  !!!可能耗时比较长？？？'''
+        wish_follows = self.wg.get_follows(uid)
+        user_follows = self.ug.get_follows(uid)
+        #用所有关注的 人&愿望 的feed_evt 动态  union 之后添加到 uid的feed列表里面
+        #TODO: 如果一个人的feed evt 5K条， 关注操作后的  关注为100人  那么union将会产生 50W条消息，可能导致cpu响应过长？
+        keys = []
+        for u in user_follows:
+            keys.append(self.FEED_EVT_KEY%u)
+        for w in wish_follows:
+            keys.append(self.FEED_EVT_KEY%w)
+        self.r.zunionstore(self.FEED_KEY%uid,keys,'max')
+        self.r.zremrangebyrank(self.FEED_KEY%uid,0,-5000)

@@ -1,0 +1,13 @@
+{% import util %}
+<div class="entry-title">
+	<h2><a target="_blank" href="/wish/{{feed['wish'].wid}}">{{feed['wish'].title if feed['wish'].title else '<span class="">没有标题的愿望</span>'}}</a></h2>
+</div>
+<div class="entry-meta">
+	<span class="">{{feed['action']}}</span>
+	<span class="time">{{ util.timeformat(feed['wish'].ctime)	}}</span>
+</div>
+<div class="entry-content">
+	<p>
+		{{ feed['content'] }}
+	</p>
+</div>

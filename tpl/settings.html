@@ -22,14 +22,18 @@
 						</ul>
 						<div class="tab-content">
 							<div id="1"  class="tab-pane active" >
-								<form action="/settings/profile" class="form-horizontal">
+								<form action="/settings/profile" enctype="multipart/form-data" target="upload_target" class="form-horizontal">
+									<iframe name="upload_target" style="display:none"></iframe>
 									<div class="control-group">
 										<label>上传头像：</label>
 										<div class="controls">
-											<img class="xdv" src="http://p1.zhimg.com/05/f4/05f451da1_l.jpg" />
-											<input type="file" class="input-text" name="nickname" />
+											<img width="100" class="avatar-preview" src="http://p1.zhimg.com/05/f4/05f451da1_l.jpg" />
+											<br /><input type="file" id='avatar-file' class="input-text" name="nickname" />
+											<button id='do-upload' class="btn btn-primary">开始上传</button>
 										</div>
 									</div>
+								</form>
+								<form action="/settings/profile" class="form-horizontal">
 									<div  class="control-group">
 										<label>昵称：</label>
 										<div class="controls">
@@ -37,6 +41,7 @@
 										</div>
 									</div>
 									<div class="form-actions">
+											<input type="hidden" name='avatar' />
 										<input type="submit" class="btn btn-primary  input-button" value="保存设置" />
 									</div>
 								</form>

@@ -24,19 +24,56 @@ class StartHandler(BaseHandler):
  
 @route(r'/home')
 class HomeHandler(BaseHandler):
-    def initialize(self):
-        super(HomeHandler,self).initialize()  
-        return
+    def parse_feeds(self,feeds): 
+        feeds_list = []
+        if not feeds : 
+            return feeds_list
+        def feed_new_w(item,feed): 
+            feed['action'] = feed['actor']+'新添了该愿望'
+            feed['content'] = feed['wish'].content
+            return
+        def feed_follow_w(item,feed):
+            feed['action'] = feed['actor']+'关注了该愿望'
+            feed['content'] = feed['wish'].content
+            return
+        def feed_bless_w(item,feed):
+            feed['action'] = feed['actor']+'祝福了该愿望'
+            feed['content'] = feed['wish'].content
+            return
+        def feed_update_w(item,feed):
+            feed['action'] = feed['actor']+'更新了该愿望'
+            feed['content'] = feed['wish'].content
+            return
+        def feed_comment_w(item,feed):
+            feed['action'] = feed['actor']+'评论了该愿望'
+            comment = self.session.query(models.Comment).get(int(item['actionid']))
+            feed['content'] = comment.content
+            return 
+        for item in feeds:
+            item = json_decode(item)
+            feed = {}
+            feed['wish'] = self.session.query(models.Wish).get(int(item['targetid']))
+            user = self.session.query(models.User).get(int(item['actorid']))
+            feed['actor'] = '<a href="/people/%s">%s</a>'%(item['actorid'],user.displayname or user.uniquename)
+            {'new_w':feed_new_w,
+             'follow_w' : feed_follow_w,
+             'bless_w' : feed_bless_w,
+             'update_w' :feed_update_w,
+             'comment_w' : feed_comment_w
+             }[item['type']](item,feed)
+            feeds_list.append(feed)
+        return feeds_list
     def timeline(self,json=False):
-        #TODO
-        wishes = self.session.query(models.Wish).order_by(models.Wish.ctime.desc())[:19] 
-        if json : 
-            return self.json_write(code='001', data=wishes)
-        return wishes
+        #TODO:
+        feeds_data= self.parse_feeds(self.feed.get_feeds(self.current_user.uid))
+#        wishes = self.session.query(models.Wish).order_by(models.Wish.ctime.desc())[:19] 
+#        if json : 
+#            return self.json_write(code='001', data=wishes)
+        return feeds_data
     @authenticated
     def get(self):
         self.arg.update({
-               'data' : self.timeline(),
+               'feeds' : self.timeline(),
                'title' : "愿望动态"
         })
         self.render('home.html',arg=self.arg)
@@ -60,19 +97,31 @@ class FollowHandler(BaseHandler):
                     'fuid' : self.current_user.uid,
                     'op' : self.get_argument('op'),
                     }
-            wish = self.session.query(models.Wish).get(data['toid'])
-            if not wish :
-                raise ValueError()
-            validate(data,self.schema)       
+            validate(data,self.schema)
+            wish = None
+            if data['target'] == 'wish':
+                wish = self.session.query(models.Wish).get(data['toid'])
+                if not wish :
+                    raise ValueError()
             getattr({'wish' : self.wg,'people':self.ug}[data['target']],data['op'])(data['fuid'],data['toid'])
             
             #关注时，对被关注人发送一条notice
             if(self.current_user.uid != data['toid'] and data['op'] =='follow'):
-                self.noti.add_notice(wish.uid,{
+                to = wish.uid if wish else data['toid']
+                self.noti.add_notice(to,{
                                                             'type' : data['target']+'_follow',
                                                             'fuid' : self.current_user.uid,
-                                                            'toid' : wish.wid
+                                                            'toid' : wish.wid if wish else None
                                                    })
+            #仅当followe某愿望时更新feed evt
+            if data['target'] == 'wish' :
+                self.feed.add_to_feed_evt(uid=self.current_user.uid, content={
+                                                                              'type' : 'follow_w',
+                                                                              'actorid' : self.current_user.uid,
+                                                                              'targetid' : wish.wid
+                                                                              })
+            #同时重建自己的feed列表
+            self.feed.build_feed(self.current_user.uid)
             self.json_write(code='002')
         except ValueError,e:
             self.json_write(code='000')        
@@ -115,14 +164,15 @@ class WishMakeHandler(BaseHandler):
             self.session.add(wish)
             
             self.session.commit()
-            self.update_tag(wish)
-            self.update_friends(wish)
+            is_active = data['stat'] == 'active'
+            self.update_tag(wish,is_active)
+            self.update_friends(wish,is_active)
             return wish
         
         except ValueError,e:
             self.write(e.message)#TODO for debug
             self.json_write(code='000')
-    def update_friends(self,wish):
+    def update_friends(self,wish,is_active):
         ''' '''
         if wish :
             friends = self.ug.get_friends(self.current_user.uid)
@@ -130,16 +180,17 @@ class WishMakeHandler(BaseHandler):
             uids = []
             for user in users :
                 if(str(user[0]) in friends) :
-                    uids.append(user[0])
-                    #对提到的人都发送一条通知
-                    self.noti.add_notice(user[0],{
-                                                                'type' : 'atme',
-                                                                'fuid':self.current_user.uid,
-                                                                'fid' : wish.wid
+                    uids.append(user[0]) 
+                    if(is_active): #仅当愿望正式提交时，才通知friends
+                    #TODO:,更新愿望后，同一批人又将会得到通知！！
+                        self.noti.add_notice(user[0],{
+                                                                    'type' : 'atme',
+                                                                    'fuid':self.current_user.uid,
+                                                                    'fid' : wish.wid
                                                        })
             self.wag.update_ones(wish.wid, set(uids))
             
-    def update_tag(self,wish):
+    def update_tag(self,wish,is_active):
         '''
                         用redis做tag存储
                         结构|set:
@@ -158,32 +209,55 @@ class WishMakeHandler(BaseHandler):
         else:
             wid = int(self.get_argument('wid')) if self.get_argument('wid').isdigit() else None
         if wid :
-            wish = self.session.query(models.Wish).get(wid)
+            wish = self.session.query(models.Wish).get(wid) #
             if not wish : 
                 self.json_write('101')
                 return
             else:
-                self.make_wish(wish)
+                wish = self.make_wish(wish)
+                #修改愿望时，更新愿望的feed evt
+                if wish.stat =='active' : 
+                    self.feed.add_to_feed_evt(wid=wish.wid,is_wish_evt=True, content={
+                                                                                      'type' : 'update_w',
+                                                                                      'actorid' : wish.uid,
+                                                                                      'targetid' : wish.wid
+                                                                                    })
                 self.json_write(code='100')
-        else: 
+            
+        else: #添加愿望并更新该用户feed
+            wish = self.make_wish(wish)
+            if wish.stat == 'active':
+                self.feed.add_to_feed_evt(uid=self.current_user.uid,content={
+                                                                         'type':'new_w',
+                                                                         'actorid' : self.current_user.uid,
+                                                                         'targetid' : wish.wid
+                                                                     })
             self.json_write(code='100')
     @authenticated
     def get(self, *match, **kw):
         if match and match[0]:#编辑愿望
             wish = self.session.query(models.Wish).get(int(match[0]))
             if not wish : raise HTTPError(404)
+            if(wish.uid and not self.is_owner(wish.uid)):
+                self.redirect('/')
+                return 
+            atuids = self.wag.get_ones(wish.wid) 
+            atusers =  [self.session.query(models.User.uid, models.User.displayname, models.User.avatar ).filter_by(uid=atuid).first() for atuid in atuids]
+            self.arg.update({
+                'tags' : str(list(self.tg.get_tags(wish.wid))),
+                'atfriends' : json_encode(atusers),
+            })
         else:#新建愿望
             wish = models.Wish()
-        if(wish.uid and not self.is_owner(wish.uid)):
-            self.redirect('/')
-            return 
+            self.arg.update({
+                'tags' : json_encode([]),
+                'atfriends' : json_encode([]),
+            })
+            
+        #无论是新建还是编辑都需要加载的信息：↓
         uids = self.ug.get_friends(self.current_user.uid)
         users = [self.session.query(models.User.uid, models.User.displayname, models.User.avatar ).filter_by(uid=uid).first() for uid in uids]
-        atuids = self.wag.get_ones(wish.wid) 
-        atusers =  [self.session.query(models.User.uid, models.User.displayname, models.User.avatar ).filter_by(uid=atuid).first() for atuid in atuids]
         self.arg.update({
-            'tags' : str(list(self.tg.get_tags(wish.wid))),
-            'atfriends' : json_encode(atusers),
             'wish' : wish,
             'title' : '许愿',
             'friends' : json_encode(users)
@@ -219,13 +293,18 @@ class WishVoteHandler(FollowHandler):
             wish = self.session.query(models.Wish).get(data['toid'])
             validate(data,self.schema)
             getattr(self.wg, data['op'])(data['fuid'],data['toid'])
-            #仅在祝福时发送一条notice
-            if(self.current_user.uid != data['toid'] and data['op'] =='bless'):
+            #仅在祝福时发送一条notice 并更新feed evt
+            if(data['op'] =='bless' and self.current_user.uid != wish.uid ):
                 self.noti.add_notice(wish.uid,{
                                                 'type' : data['op'],
                                                 'fuid':self.current_user.uid,
                                                 'toid':wish.wid
                                                })
+                self.feed.add_to_feed_evt(uid=self.current_user.uid, content={
+                                                                               'type' : 'bless_w',
+                                                                               'actorid' : self.current_user.uid,
+                                                                               'targetid' : wish.wid
+                                                                               })
             self.json_write(code='002',data=getattr(self.wg,'get_'+data['op'].replace('un','')+'_count')(wish.wid))
         except ValueError,e:
             self.json_write(code='000')
@@ -248,6 +327,11 @@ class WishListHandler(BaseHandler):
 class WishPoolHandler(BaseHandler):
     @authenticated
     def get(self):
+        #TODO:
+        wishes = self.session.query(models.Wish)[0:19]
+        self.arg.update({
+                         'wishes' : wishes
+                         })
         self.render('wish-pool.html',arg=self.arg)
 
 @route(r'/friends')
@@ -259,12 +343,13 @@ class FriendsHandler(BaseHandler):
         self.json_write('005',data=users)
         
 @route(r'/people/(\d+)')
-class PeopleHandler(BaseHandler):
+class PeopleHandler(HomeHandler):
     @authenticated
     def get(self,*match,**kw):
         user = self.session.query(models.User).get(int(match[0]))
         wishes = self.session.query(models.Wish).filter_by(uid=user.uid,is_public=1)
         self.arg.update({
+                         'feeds' : self.parse_feeds(self.feed.get_feeds_evt(user.uid)),
                          'user' : user,
                          'public' : wishes,
                         'title' : '%s - 个人主页'%(user.displayname or user.email)
@@ -412,7 +497,7 @@ class CommentHandler(BaseHandler):
                     setattr(comment,item,data[item])
                 self.session.add(comment)
                 self.session.commit()
-                #添加评论时，对wish主人发送一条notice
+                #添加评论时，对wish主人发送一条notice 并对wish 添加一条feed evt
                 if(wish.uid != self.current_user.uid) : 
                     self.noti.add_notice(wish.uid, {
                                                     'type':'comment',
@@ -420,6 +505,12 @@ class CommentHandler(BaseHandler):
                                                     'fid':comment.cid,
                                                     'toid':wish.wid
                                                     })
+                    self.feed.add_to_feed_evt(wid=wish.wid,is_wish_evt=True, content={
+                                                                                      'type' : 'comment_w',
+                                                                                      'actorid' : wish.uid,
+                                                                                      'actionid' : comment.cid,
+                                                                                      'targetid' : wish.wid
+                                                                                      })
                 #如果有reply_uid,且reply_uid不等于wish.uid,发送一条notice
                 if(reply_uid != 0  and reply_uid != wish.uid) :
                     self.noti.add_notice(reply_uid,  {
@@ -534,6 +625,23 @@ class LabHandler(BaseHandler):
                          'most-curse' : most_curse,
                          })
         self.render('lab-rank.html',arg=self.arg)
+        
+@route(r'/upload')
+class UploadHandler(BaseException):    
+    @authenticated    
+    def post(self):
+        import time
+        import tempfile
+        import os.path,random,string
+        if self.request.files:
+            file1 = self.request.files['file1'][0]
+            original_fname = file1['filename']
+            extension = os.path.splitext(original_fname)[1]
+            fname = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(6))
+            final_filename= fname+extension
+            output_file = open("uploads/" + final_filename, 'w')
+            output_file.write(file1['body'])
+            self.finish("file" + final_filename + " is uploaded")
 @route(r'/test')
 class TestHandler(BaseHandler):
     @asynchronous

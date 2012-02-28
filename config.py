@@ -10,7 +10,8 @@ app_config = {
     'debug' : True,
     'autoescape' : None,
     'ui_modules': {"Entry": uimodules.EntryModule,
-                   'Aside': uimodules.AsideModule
+                   'Aside': uimodules.AsideModule,
+                   "FeedEntry" : uimodules.FeedModule
                    },
 }
 mysql_config = {

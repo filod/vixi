@@ -6,9 +6,19 @@
 			<div class="main">
 				<div class="wish-pool-wrap">
 					<div class="panel">
-						<span class="change"><button class="btn btn-primary" >池子里捞一把！</button></span>
+						<span class="change">
+							<button class="btn btn-primary" >
+								池子里捞一把！
+							</button></span>
 					</div>
 					<div class="pool">
+						<ul class="">
+							{% for wish in arg['wishes'] %}
+							<li>
+								{{ modules.Entry(wish,poster=False) }}
+							</li>
+							{% end %}
+						</ul>
 						<!--wish-entry-wrap -->
 					</div>
 				</div>
@@ -17,4 +27,4 @@
 		</div>
 	</div>
 </div>
-{% end %}
+{% end %} 
