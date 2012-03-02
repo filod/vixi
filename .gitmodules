@@ -7,3 +7,6 @@
 [submodule "vendor/src/validictory"]
 	path = vendor/src/validictory
 	url = git://github.com/sunlightlabs/validictory.git
+[submodule "vendor/src/redis-py"]
+	path = vendor/src/redis-py
+	url = git://github.com/andymccurdy/redis-py.git
