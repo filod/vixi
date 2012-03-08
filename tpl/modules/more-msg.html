@@ -1,0 +1,19 @@
+{% import util %}
+{% for message in arg['conversation'] %}
+<li class="{{'me' if message.from_user.uid == arg['current_user'].uid else 'opp'}}">
+	<div data-message-id="{{message.id}}" class="message-entry-wrap">
+		<div class="entry-meta">
+			<a  class="author" href="/people/{{message.from_user.uid}}"><img width="30" src="{{message.from_user.avatar or static_url('img/no-avatar.jpg')}}" alt="{{message.from_user.displayname or message.from_user.uniquename}}" /> {{message.from_user.displayname or message.from_user.uniquename}}</a>
+			<span class="time">{{ util.timeformat(message.ctime,long_form=True)	}}</span>
+		</div>
+		<div class="entry-content">
+			<p>
+				{{ message.content }}
+			</p>
+		</div>
+		<div class="entry-util">
+			<a href="javascript:;" class="all-msg"> 删除 </a>
+		</div>
+	</div>
+</li>
+{% end %}

@@ -1,0 +1,20 @@
+<div class="modal dis" id="msg-modal">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>给 {{arg['user'].displayname }} 发送私信</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			<textarea class="" name="content" id="msg-content" ></textarea>
+		</p>
+	</div>
+	<div class="modal-footer">
+		<span class="send-status"></span>
+		<button data-uid="{{arg['user'].uid}}" href="javascript:;" id="do-send-message" class="btn btn-primary">
+			发送
+		</button>
+		<button href="javascript:;" data-dismiss="modal" class="btn">
+			关闭
+		</button>
+	</div>
+</div>

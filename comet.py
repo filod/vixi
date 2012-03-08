@@ -23,7 +23,7 @@ class MainHandler(NoticeHandler):
         if atonce :
             tornado.ioloop.IOLoop.instance().add_timeout(time.time() + 1, lambda: self.get_data(callback=self.wait))
         else : 
-            tornado.ioloop.IOLoop.instance().add_timeout(time.time() + 50, lambda: self.get_data(callback=self.wait))
+            tornado.ioloop.IOLoop.instance().add_timeout(time.time() + 10, lambda: self.get_data(callback=self.wait))
     def get(self,*m,**kw):
         raise HTTPError(405)
     

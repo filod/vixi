@@ -1,13 +1,14 @@
 {% import util %}
 <div class="entry-title">
-	<h2><a target="_blank" href="/wish/{{feed['wish'].wid}}">{{feed['wish'].title if feed['wish'].title else '<span class="">没有标题的愿望</span>'}}</a></h2>
+	<h3><a target="_blank" href="/wish/{{feed['wish'].wid}}">{{feed['wish'].title if feed['wish'].title else '<span class="">没有标题的愿望</span>'}}</a>{{'<span class="label">已实现</span>' if feed['wish'].has_cometrue else '<span class="label label-success">未实现</span>'}}</h3>
 </div>
 <div class="entry-meta">
 	<span class="">{{feed['action']}}</span>
 	<span class="time">{{ util.timeformat(feed['wish'].ctime)	}}</span>
+	<input type="hidden" class="feed-ctime" value="{{feed['ctime']}}" />
 </div>
 <div class="entry-content">
 	<p>
-		{{ feed['content'] }}
+		{{ util.truncate(feed['content']) }}
 	</p>
 </div>

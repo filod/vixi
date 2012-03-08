@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block page %}
+{% import util %}
+<div id="home-page" class="page">
+	<div class="content-wrap row">
+		<div class="main span8">
+			{% include 'modules/profile.html'%}
+			<div class="timeline-wrap">
+				<h4>我关注的人…</h4>
+				<div class="" id="">
+					<ul class="people-list">
+						{% for user in arg['people'] %}
+						<li>
+							{{ modules.PeopleEntry(user) }}
+						</li>
+						{% end %}
+					</ul>
+					<div class="row">
+						<button href="javascript:;" data-type='home-feed' id="" class="btn btn-large btn-more span8">
+							更多..
+						</button>
+					</div>
+				</div>
+			</div>
+			<!--aside -->
+		</div>
+	</div>
+</div>
+{% end %}

@@ -17,6 +17,7 @@ class BaseHandler(RequestHandler):
                     }
         self.tg = models.TagGraph(self.r)
         self.ug = models.UserGraph(self.r)
+        self.um = models.UserMeta(self.r)
         self.wg = models.WishGraph(self.r)
         self.wag = models.WishAtGraph(self.r)
         self.feed = models.Feed(self.r)

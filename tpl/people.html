@@ -3,14 +3,7 @@
 <div id="home-page" class="page">
 	<div class="content-wrap row">
 		<div class="main span8">
-			<div class="profile row">
-				<div class="face span2">
-					<a href="/people/{{arg['user'].uid}}"><img alt="{{arg['current_user'].displayname or arg['current_user'].uniquename}}" class="" src="{{ arg['current_user'].avatar or '/static/img/no-avatar.jpg' }}" /></a>
-				</div>
-				<div class="detail span6">
-					<h2>{{arg['user'].displayname or arg['user'].uniquename}}</h2>
-				</div>
-			</div>
+			{% include 'modules/profile.html'%}
 			<div class="">
 				<div class="tabbable">
 					<ul class="nav nav-tabs">
@@ -23,22 +16,28 @@
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="1">
-							<ul class="">
+							<ul class="timeline-list entry-list">
 								{% for feed in arg['feeds'] %}
 								<li>
 									{{ modules.FeedEntry(feed) }}
 								</li>
 								{% end %}
 							</ul>
+							<div class="row">
+								<button href="javascript:;" data-type='people-feed' data-nextpage="2" id="" class="btn btn-large btn-more span8">更多..</button>
+							</div>
 						</div>
 						<div class="tab-pane" id="2">
-							<ul class="">
+							<ul class="public-list entry-list">
 								{% for wish in arg['public'] %}
 								<li>
 									{{ modules.Entry(wish,poster=False) }}
 								</li>
 								{% end %}
 							</ul>
+							<div class="row">
+								<button href="javascript:;" data-type='public-wish' data-nextpage="2" id="" class="btn btn-large btn-more span8">更多..</button>
+							</div>
 						</div><!--
 						<div class="tab-pane" id="3"></div>
 						<div class="tab-pane" id="4"></div> -->
@@ -47,21 +46,7 @@
 			</div>
 		</div>
 		{{ modules.Aside(page='people',user=arg['user']) }}
-		<div class="modal dis" id="msg-modal">
-			<div class="modal-header">
-				<a class="close" data-dismiss="modal">×</a>
-				<h3>给 {{arg['user'].displayname }} 发送私信</h3>
-			</div>
-			<div class="modal-body">
-				<p>
-					<textarea name="content" id="msg-content" ></textarea>
-				</p>
-			</div>
-			<div class="modal-footer">
-				<span class="send-status"></span>
-				<button data-uid="{{arg['user'].uid}}" href="javascript:;" id="do-send-message" class="btn btn-primary">发送</button>
-				<button href="javascript:;" data-dismiss="modal" class="btn">关闭</button></div>
-		</div>
+		{% include 'modules/message.html' %}
 	</div>
 </div>
 {% end %}

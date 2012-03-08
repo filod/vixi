@@ -1,0 +1,19 @@
+{% for conversation in arg['conversation-list'] %}
+<li class="{{'me' if conversation[0].from_user.uid == arg['current_user'].uid else 'opp'}}">
+	<div data-conversation-id="{{conversation[0].conversation}}" class="conversation-entry-wrap">
+		<div class="entry-meta">
+			<img width="30" src="{{conversation[0].from_user.avatar or static_url('img/no-avatar.jpg')}}" alt="{{conversation[0].from_user.displayname or conversation[0].from_user.uniquename}}" />
+			<a  class="author" href="/people/{{conversation[0].from_user.uid}}">{{conversation[0].from_user.displayname or conversation[0].from_user.uniquename}}</a>
+			<span class="time">{{ util.timeformat(conversation[0].ctime,long_form=True)	}}</span>
+		</div>
+		<div class="entry-content">
+			<p>
+				{{ conversation[0].content }}
+			</p>
+		</div>
+		<div class="entry-util">
+			<a href="/inbox/{{conversation[0].conversation}}" class="all-msg">查看全部{{conversation[1]}}条对话</a>
+		</div>
+	</div>
+</li>
+{% end %}

@@ -3,8 +3,11 @@
 {% import util %}
 <div id="notifacations" class="page">
 	<div class="content-wrap row">
-			<div class="main span8">		
-				<div>
+		<div class="main span8">
+			<div class="page-header">
+				<h2>通知</h2>
+			</div>
+			<div>
 				<div class="tabbable">
 					<ul class="nav nav-tabs">
 						<li class="active">
@@ -16,32 +19,40 @@
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="1">
-							<div>
-								<button id='clear-notice' class="clear-notice btn btn-large {{'disabled' if arg['count']==0 else ''}}" {{'disabled' if arg['count']==0 else ''}}>清空未读通知</button>
+							<div class="toolbar clear">
+								<button id='clear-notice' rel='tooltip' title="清空后可在「全部通知」中查看" class="clear-notice btn {{'disabled' if arg['count']==0 else ''}}" {{'disabled' if arg['count']==0 else ''}}>
+									清空未读通知
+								</button>
 							</div>
 							<div class="">
-								<ul class="notice-list">
-									{{'没有未读通知，你可以<a href="#2">查看全部通知</a>' if arg['count']==0 else ''}}  
+								<ul class="unread-list">
+									{{'没有未读通知，你可以<a href="#2">查看全部通知</a>' if arg['count']==0 else ''}}
 									{% for noti in arg['unread']%}
-										<li>
-											{{noti['who']}} {{noti['op']}} {{noti['target'] or ''}} <span>{{ util.timeformat(noti['ctime'])}}</span> <a rel="tooltip" data-uuid="{{noti['uuid']}}"  title="知道啦" href="javascript:;" class="iknow tip"><i class="icon-minus"></i></a>
-										</li>
+									<li>
+										{{noti['who']}} {{noti['op']}} {{noti['target'] or ''}} <span class="time">{{ util.timeformat(noti['ctime'])}}</span><a rel="tooltip" data-uuid="{{noti['uuid']}}"  title="知道啦" href="javascript:;" class="iknow tip"><i class="icon-minus"></i></a>
+									</li>
 									{% end %}
 								</ul>
 							</div>
+							<div class="row">
+								<button href="javascript:;" data-type='unread' data-nextpage="2"  id="" class="btn btn-large btn-more span8">更多..</button>
+							</div>
 						</div>
-						<div class="tab-pane" id="2">  
-							<ul class="">
+						<div class="tab-pane" id="2">
+							<ul class="allnoti-list">
 								{% for noti in arg['allnoti']%}
-									<li>
-										{{noti['who']}} {{noti['op']}} {{noti['target'] or ''}}
-									</li>
+								<li>
+									{{noti['who']}} {{noti['op']}} {{noti['target'] or ''}}
+								</li>
 								{% end %}
 							</ul>
+							<div class="row">
+								<button href="javascript:;" data-type='allnoti' data-nextpage="2" id="" class="btn btn-large btn-more span8">更多..</button>
+							</div>
 						</div>
 					</div>
 				</div>
-				</div>
+			</div>
 			<!-- aside -->
 		</div>
 	</div>

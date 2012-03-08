@@ -1,7 +1,7 @@
 {% import util %}
-<ul>
+<ul class="entry-list comment-list">
 	{% for comment in arg['comments'] %}
-	<li>
+	<li class="">
 		<div class="comment-entry-wrap">
 			<div class="entry-meta">
 				<img width="30" src="{{comment.user.avatar or static_url('img/no-avatar.jpg')}}" alt="{{comment.user.displayname or comment.user.uniquename}}" />

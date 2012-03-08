@@ -111,12 +111,18 @@
 #b= [int(i) for i in a]
 #print b
 
-def get_conversation_id(l):
-    l.sort()
-    c = (long(l[0]) << 32) + l[1]
-    return c
+#import sys
+#print "%d"%(4294967312 & sys.maxint)
+#def get_conversation_id(l):
+#    MOVEBITS = 32
+#    l.sort()
+#    c = (long(l[0]) << MOVEBITS) + l[1]
+#    return c
+#def is_conversation_ownby(uid,conv_id):
+#    return uid in [conv_id >> 32,conv_id & sys.maxint]
+#print "%d"%get_conversation_id([1L,16])
+#print "%x"%get_conversation_id([2,1]) 
+#print "%x"%get_conversation_id([2,4]) 
+#print "%x"%get_conversation_id([4,2])
+#print 7415424000 >> 32 
 
-print "%x"%get_conversation_id([1,2])
-print "%x"%get_conversation_id([2,1]) 
-print "%x"%get_conversation_id([2,4]) 
-print "%x"%get_conversation_id([4,2])

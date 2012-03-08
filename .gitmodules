@@ -10,3 +10,6 @@
 [submodule "vendor/src/redis-py"]
 	path = vendor/src/redis-py
 	url = git://github.com/andymccurdy/redis-py.git
+[submodule "vendor/src/bootstrap"]
+	path = vendor/src/bootstrap
+	url = git@github.com:filod/bootstrap.git

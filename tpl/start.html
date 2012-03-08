@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<title>幸愿网 | 许愿，然后实现！</title>
+		<title>未息网 | 许愿，然后实现！</title>
 		<meta name="description" content="开始页" />
 		<meta name="author" content="filod" />
 		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -12,21 +12,57 @@
 		<link rel="stylesheet" href="{{ static_url('css/bootstrap.css') }}" type="text/css"/>
 		<link rel="stylesheet" href="{{ static_url('css/bootstrap-responsive.css') }}" type="text/css"/>
 		<link rel="stylesheet" href="{{ static_url('css/w.css') }}" type="text/css"/>
+		<link rel="stylesheet" href="{{ static_url('css/sp.css') }}" type="text/css"/>
 	</head>
 	<body>
 		<div id="switcher" class="fix-right">
-				<a href="http://www.diandian.com/signin" id="go-signin" style="display:none">登录</a>
-				<a href="http://www.diandian.com/register" id="go-register" >注册</a>
+			<a href="javascript:;" class="btn" id="go-signin" style="display:none">登录</a>
+			<a href="javascript:;"class="btn btn-success"  id="go-register" >注册</a>
 		</div>
 		<div class="container">
-		<div id="start-page" class="page-wrap row">
-			<div id="startpage-wrap" class="span6 offset3">
-				<h1 class="txt-hide logo-big" id="logo">幸愿网 - 许愿，然后实现！</h1>
-				<div>
-					<img src="/static/img/finish-pic.png" height="200" width="200" alt="" />
-				</div>
-				<div id="signin-wrap">
-					<form id="signin-form" class="form-horizontal" action="/signin" method="post">
+			<div id="start-page" class="page-wrap row">
+				<div id="startpage-wrap" class="">
+					<div class="span9">
+						<h1 class="txt-hide logo-big" id="logo">未息网 - 许愿，然后实现！</h1>
+						<div id="myCarousel" class="carousel slide">
+							<div class="carousel-inner">
+								<div class="item active">
+									<img src="/static/img/ad1.jpg" alt="">
+									<div class="carousel-caption">
+										<h4>关于网站的介绍</h4>
+										<p>
+											未息要完成的目标是给用户提供一个记录愿望的地方，并且可以邀请人物（即你的好友）来帮助你实现愿望。
+										</p>
+									</div>
+								</div>
+								<div class="item">
+									<img src="/static/img/ad2.jpg" alt="">
+									<div class="carousel-caption">
+										<h4>关于网站的介绍</h4>
+										<p>
+											未息要完成的目标是给用户提供一个记录愿望的地方，并且可以邀请人物（即你的好友）来帮助你实现愿望。
+										</p>
+									</div>
+								</div>
+								<div class="item">
+									<img src="/static/img/ad3.jpg" alt="">
+									<div class="carousel-caption">
+										<h4>关于网站的介绍</h4>
+										<p>
+											未息要完成的目标是给用户提供一个记录愿望的地方，并且可以邀请人物（即你的好友）来帮助你实现愿望。
+										</p>
+									</div>
+								</div>
+							</div>
+							<a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+							<a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+						</div>
+					</div>
+					<div id="signin-wrap" class="">
+						<form id="signin-form" class="form-horizontal" action="/signin" method="post">
+							<legend >
+								登录未息…
+							</legend>
 							<div class="input-prepend">
 								<span class="input-icon add-on"><i class="icon-envelope"></i></span>
 								<label class="txt-hide dis">邮箱</label>
@@ -34,53 +70,92 @@
 								<div class="form-tip" ></div>
 							</div>
 							<div class="input-prepend">
-								<span class="input-icon add-on"></span>
+								<span class="input-icon add-on"><i class="icon-lock"></i></span>
 								<label  class="txt-hide dis">密码</label>
-								<input class="input-text required" type="password" name="password" >
+								<input class="input-text required"  placeholder="密码"  type="password" name="password" >
 								<div class="form-tip dis" ></div>
 							</div>
-						<input type="hidden" name="nextUrl" value="" />
-						<input type="hidden" name="lcallback" value="" />
-						<input type="hidden" name="persistent" value="1" checked="checked">
-						<input type="submit" id="signin-submit" class="btn btn-large btn-success" value="登录">
-					</form>
-					<div id="signin-help" class="clearfix">
-						<a href="http://www.diandian.com/password/forgot" id="forget-password">忘记密码?</a>
-						<span id="third-party-signin">其他方式登录</span>
+							<input type="hidden" name="nextUrl" value="" />
+							<input type="hidden" name="lcallback" value="" />
+							<input type="hidden" name="persistent" value="1" checked="checked">
+							<button type="submit" id="signin-submit" class="btn btn-large btn-success">
+								登录 <i class="icon-play-circle icon-white"></i>
+							</button>
+						</form>
+						<div id="signin-help" class="clearfix">
+							<a href="/password/forgot" id="forget-password">忘记密码?</a>
+							<span class="dis" id="third-party-signin">其他方式登录</span>
+						</div>
+					</div>
+					<div id="register-wrap" class="dis" >
+						<form id="reg-form" class="clear" action="/register" method="post" autocomplete="off">
+							<legend >
+								注册未息…
+							</legend>
+							<div class="input-prepend">
+								<span class="input-icon add-on"><i class="icon-envelope"></i></span>
+								<label class="txt-hide dis">邮箱</label>
+								<input class="input-text required" placeholder="邮箱" type="text" name="email" value="">
+								<div class="form-tip" ></div>
+							</div>
+							<div class="input-prepend input-wrap" id="input-reg-pwd">
+								<span class="input-icon add-on"><i class="icon-lock"></i></span>
+								<label  class="txt-hide dis">密码</label>
+								<input class="input-text required"  placeholder="密码"  type="password" name="password" >
+								<div class="form-tip dis" ></div>
+							</div>
+							<div class="input-prepend">
+								<span class="input-icon add-on"><i class="icon-user"></i></span>
+								<label class="txt-hide dis">昵称</label>
+								<input class="input-text required" placeholder="昵称" type="text" name="displayname" value="">
+								<div class="form-tip" ></div>
+							</div>
+							<button type="submit" id="reg-submit" class="btn  btn-large btn-success" value="">
+								注册
+							</button>
+						</form>
+					</div>
+					<div id="third-party-wrap" style="display:none;" fullheight="109">
+						<a href="/j/168" class="renren" style="display: none">人人网</a>
+						<a href="/j/167" class="qq">QQ</a>
+						<a href="/j/103" class="weibo">新浪微博</a>
 					</div>
 				</div>
-				<div id="register-wrap" >
-					<form id="reg-form" class="clearfix" action="/register" method="post" autocomplete="off">
-						<div class="input-wrap validated" id="input-reg-email">
-							<span class="input-icon"></span>
-							<label>邮箱</label>
-							<input class="input-text required" type="text" name="email" value="">
-							<div class="form-tip" ></div>
-						</div>
-						<div class="input-wrap" id="input-reg-pwd">
-							<span class="input-icon"></span>
-							<label>密码</label>
-							<input class="input-text validated required" type="password" name="password">
-							<div class="form-tip" ></div>
-						</div>
-						<input type="submit" id="reg-submit" class="btn  btn-large btn-success" value="注册">
-					</form>
-				</div>
-
-				<div id="third-party-wrap" style="display:none;" fullheight="109">
-					<a href="http://www.diandian.com/j/168" class="renren" style="display: none">人人网</a>
-					<a href="http://www.diandian.com/j/167" class="qq">QQ</a>
-					<a href="http://www.diandian.com/j/103" class="weibo">新浪微博</a>
-				</div>
+			</div>
+			<div id="footer" class="fix-bottom dis">
+				<ul id="footer-info">
+					<li>
+						<a href="">未息网&copy;2012 </a>
+					</li>
+					<li>
+						<a class="footer-item" href="/about">关于未息</a>
+					</li>
+					<li>
+						<a class="footer-item" href="http://www.miibeian.gov.cn/" target="_blank">某ICP备10214511号</a>
+					</li>
+				</ul>
 			</div>
 		</div>
-		<div id="footer" class="fix-bottom">
-					<ul id="footer-info">
-						<li><a href="http://www.diandian.com">幸愿网&copy;2012 </a></li>
-						<li><a class="footer-item" href="http://www.diandian.com/about">关于幸愿</a></li>
-						<li><a class="footer-item" href="http://www.miibeian.gov.cn/" target="_blank">某ICP备10214511号</a></li>
-					</ul>
-		</div>
-		</div>
+		<script type="text/javascript" src="{{ static_url('js/lib/jquery.js') }}" charset="utf-8"></script>
+		<script type="text/javascript" src="{{ static_url('js/lib/bootstrap.js') }}" charset="utf-8"></script>
+		<script type="text/javascript">
+			$('#go-register').click(function() {
+				$(this).fadeOut(function() {
+					$('#go-signin').fadeIn();
+				});
+				$('#signin-wrap').fadeOut(function() {
+					$('#register-wrap').fadeIn();
+				})
+			});
+			$('#go-signin').click(function() {
+				$(this).fadeOut(function() {
+					$('#go-register').fadeIn();
+				});
+				$('#register-wrap').fadeOut(function() {
+					$('#signin-wrap').fadeIn();
+				})
+			});
+
+		</script>
 	</body>
 </html>

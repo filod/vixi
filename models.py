@@ -30,8 +30,10 @@ class Wish(Base):
     poster = Column(String)    
     ctime = Column(Integer)    
     stat = Column(String)   
+    mdata = Column(String)
     is_public = Column(Integer)    
-    is_anonymous = Column(Integer)     
+    is_anonymous = Column(Integer)
+    has_cometrue = Column(Integer)         
     uid = Column(Integer,ForeignKey('user.uid'))   
     user = relationship("User", backref=backref('wish'))
 #     use redis to deal this
@@ -45,7 +47,7 @@ class Comment(Base):
     cid = Column(Integer, primary_key = True)
     wid = Column(Integer)
     content = Column(String)
-    ctime = Column(Integer) 
+    ctime = Column(Integer)
     reply_uid = Column(Integer) 
     reply_cid = Column(Integer) 
     stat = Column(String)
@@ -61,8 +63,7 @@ class Message(Base):
     conversation = Column(Integer)
     from_uid = Column(Integer,ForeignKey('user.uid'))
     from_user = relationship("User",primaryjoin="Message.from_uid==User.uid",backref=backref('message'))
-    to_uid = Column(Integer,ForeignKey('user.uid'))
-    
+    to_uid = Column(Integer,ForeignKey('user.uid'))    
     
 class Conversation(object):
     def get_count(self):
@@ -84,7 +85,20 @@ class Conversation(object):
 --------------------------------
 --------------------------------    
 '''
-    
+class UserMeta(object):
+    ''' 用户设置有如下keys：
+        message-accept
+        
+     '''
+    def __init__(self, r):
+        self.r = r
+        self.META_KEY = 'user.meta:%s' #wish上有哪些tag ###user:[uid] 
+    def set_meta(self,uid,key,value):
+        self.r.hset(self.META_KEY%uid,key,value)
+        #用户设置很重要，因此每次修改后都进行一次save
+        return self.r.save()
+    def get_meta(self,uid,key):
+        return self.r.hget(self.META_KEY%uid,key)
 class TagGraph(object):
     def __init__(self, r):
         self.r = r
@@ -123,6 +137,7 @@ class TagGraph(object):
     
     
 #enlightened by gist: https://gist.github.com/564313 tks a lot!~
+#TODO: 并不能保证在获取 follows & followers的顺序 与 添加的顺序一致，可以改为zset实现。
 class UserGraph(object):
     
     def __init__(self, r):
@@ -163,15 +178,20 @@ class UserGraph(object):
         return forward and reverse
     
     
-    def get_follows(self, user):
+    def get_follows(self, user,page=1,page_size=20):
         follows = self.r.smembers('%s:%s' % (self.FOLLOWS_KEY, user))
-        blocked = self.r.smembers('%s:%s' % (self.BLOCKED_KEY, user))
-        return list(follows.difference(blocked))
-    
-    def get_followers(self, user):
+#        blocked = self.r.smembers('%s:%s' % (self.BLOCKED_KEY, user))
+#        return list(follows.difference(blocked))
+        return list(follows)[(page-1)*page_size:page*page_size]
+    def get_follows_count(self,user):
+        return self.r.scard('%s:%s' % (self.FOLLOWS_KEY, user))
+    def get_followers_count(self,user):
+        return  self.r.scard('%s:%s' % (self.FOLLOWERS_KEY, user))
+    def get_followers(self, user,page=1,page_size=20):
         followers = self.r.smembers('%s:%s' % (self.FOLLOWERS_KEY, user))
-        blocks = self.r.smembers('%s:%s' % (self.BLOCKS_KEY, user))
-        return list(followers.difference(blocks))
+#        blocks = self.r.smembers('%s:%s' % (self.BLOCKS_KEY, user))
+#        return list(followers.difference(blocks))
+        return list(followers)[(page-1)*page_size:page*page_size]
         
     def get_friends(self,user):
         '''获取某人好友（互现关注的）'''
@@ -225,13 +245,13 @@ class WishGraph(object):
     def is_followed(self,wid,user):
         return bool(self.r.sismember('%s%s'%(self.FOLLOWERS_KEY,wid),user))
     
-    def get_follows(self, user,page=1,page_size=25):
-        follows = self.r.smembers('%s:%s' % (self.FOLLOWS_KEY, user)) 
-        return list(follows)
+    def get_follows(self, user,page=1,page_size=20):
+        follows = self.r.smembers('%s:%s' % (self.FOLLOWS_KEY, user))
+        return list(follows)[(page-1)*page_size:page*page_size]
    
-    def get_followers(self, wid):
+    def get_followers(self, wid,page=1,page_size=20):
         followers = self.r.smembers('%s:%s' % (self.FOLLOWERS_KEY, wid))
-        return list(followers)
+        return list(followers)[(page-1)*page_size:page*page_size]
     
     def bless(self, from_user, toid):
         forward_key = '%s:%s' % (self.BLESS_KEY, from_user)
@@ -255,7 +275,7 @@ class WishGraph(object):
         forward = self.r.sadd(forward_key, toid)
         reverse_key = '%s:%s' % (self.CURSED_KEY, toid)
         reverse = self.r.sadd(reverse_key, from_user)
-        self.r.zadd(self.MOST_CURSE_WISH,toid,self.r.incr(self.CURSE_COUNT_KEY%toid)) 
+        self.r.zadd(self.MOST_CURSE_WISH,toid,self.r.incr(self.CURSE_COUNT_KEY%toid))
         return forward and reverse 
     def uncurse(self, from_user, toid):
         forward_key = '%s:%s' % (self.CURSE_KEY, from_user)
@@ -316,15 +336,18 @@ class WishAtGraph(object):
         return 
     def get_ones(self, wid,page=1,page_size=25):
         '''获取某愿望提及到的人'''        
-        forward_key = '%s:%s' % (self.FOLLOWS_KEY, wid) 
+        forward_key = '%s:%s' % (self.FOLLOWS_KEY, wid)
         uids = self.r.smembers(forward_key)
         return list(uids)
     def get_wishes(self,uid,page=1,page_size=25):
         '''获取某人被提及的愿望'''
-        reverse_key = '%s:%s' % (self.FOLLOWERS_KEY, uid) 
+        reverse_key = '%s:%s' % (self.FOLLOWERS_KEY, uid)
         wids = self.r.zrevrange(reverse_key,(page-1)*page_size,page*page_size)
         return list(wids)
-    
+    def is_at(self,wid,uid):
+        '''某愿望是否提及 了某人'''
+        forward_key = '%s:%s' % (self.FOLLOWS_KEY, wid)
+        return self.r.sismember(forward_key,uid)
 
 class Notice(object): 
     ''' notice 系统 
@@ -384,9 +407,9 @@ class Notice(object):
         '''
         
         return self.r.lrange('%s:%s'%(self.ALL_KEY,uid),(page-1)*page_size,page*page_size)
-    def get_unread(self,uid,page=1,page_size=99):
+    def get_unread(self,uid,page=1,page_size=20):
         '''
-                获取某人的全部未读消息    
+                                    获取某人的 未读消息    
             @param uid: 该用户的uid
             @param page: 分页，默认第一页
             @param page_size: 每页的大小  
@@ -394,8 +417,8 @@ class Notice(object):
         count = self.r.llen('%s:%s'%(self.UNREAD_LIST_KEY,uid))
         uuids = self.r.lrange('%s:%s'%(self.UNREAD_LIST_KEY,uid),(page-1)*page_size,page*page_size)
         if not uuids:
-            return [None,0 ]
-        return [self.r.hmget('%s:%s'%(self.UNREAD_HASH_KEY,uid), uuids), count] 
+            return [[],0 ]
+        return [self.r.hmget('%s:%s'%(self.UNREAD_HASH_KEY,uid), uuids) or [], count] 
     def get_unread_count(self,uid):
         return self.r.llen('%s:%s'%(self.UNREAD_KEY,uid))
     def mark(self,uid,uuid):
@@ -442,15 +465,23 @@ class Feed(object):
         self.FEED_EVT_KEY = 'feed.evt:%s'
         self.FEED_EVT_WISH_KEY = 'feed.evt.wish%s'
         
-    def get_feeds(self, uid, until=None , page=1,page_size=50):
-        '''获取某人的feeds，当指定了until的时候仅获取until之后发生的feeds '''
-        if(not until):
-            return self.r.zrevrange(self.FEED_KEY%uid,(page-1)*page_size,page*page_size)
-        else : 
-            return self.r.zrevrangebyscore(self.FEED_KEY%uid,until+1,util.now())
-    def get_feeds_evt(self,uid,page=1,page_size=50):
-        '''获取某人的feeds 事件，目前没有愿望feeds事件获取。'''
-        return self.r.zrevrange(self.FEED_EVT_KEY%uid,(page-1)*page_size,page*page_size)
+    def get_feeds(self, uid, until=None,before=None, page=1,page_size=10,limit=20): #TODO: 动态的初始条数
+        '''获取某人的feeds，
+            @param until: 当指定了until的时候仅获取until时间之后到现在发生的最新的feeds 
+            @param before: 当指定了before的时候仅获取before时间之前发生的feeds 
+        '''
+        if(not until and not before):
+            return self.r.zrevrange(self.FEED_KEY%uid,(page-1)*page_size,page*page_size,'WITHSCORES')
+        elif(until and not before): 
+            return self.r.zrevrangebyscore(self.FEED_KEY%uid,until+1,util.now(),'WITHSCORES')
+        elif(not until and before):
+            return self.r.zrevrangebyscore(self.FEED_KEY%uid,max=before-1,min='-inf',start=0,num=limit, withscores=True)
+    def get_feeds_evt(self,uid,page=1,page_size=10,before=None,limit=20): #TODO: 动态的初始条数
+        '''获取某人的feeds 事件，目前没有愿望的feeds事件获取。'''
+        if not before:
+            return self.r.zrevrange(self.FEED_EVT_KEY%uid,(page-1)*page_size,page*page_size,withscores=True)
+        else:
+            return self.r.zrevrangebyscore(self.FEED_KEY%uid,max=before-1,min='-inf',start=0,num=limit, withscores=True)
     def __add_to_feed(self,uid,content,ctime):
         ''' 给某人的 feed 添加一条内容  '''
         self.r.zadd(self.FEED_KEY%uid,content,ctime)

@@ -4,6 +4,7 @@
 	<div class="content-wrap row">
 		<div class="main span8">
 			<div class="wish-list-wrap">
+				<h2>愿望清单</h2>
 				<div id="tabs" class="tabbable">
 					<ul class="nav nav-tabs">
 						<li class="active">
@@ -18,31 +19,40 @@
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="1">
-							<ul class="">
+							<ul class="atme-list entry-list">
 								{% for wish in arg['atme'] %}
 								<li>
 									{{ modules.Entry(wish,poster=False) }}
 								</li>
 								{% end %}
 							</ul>
+							<div class="row">
+								<button href="javascript:;" data-type='atme' data-nextpage="2" id="" class="btn btn-large btn-more span8">更多..</button>
+							</div>
 						</div>
 						<div class="tab-pane" id="2">
-							<ul class="">
+							<ul class="iwish-list entry-list">
 								{% for wish in arg['iwish'] %}
 								<li>
 									{{ modules.Entry(wish,poster=False) }}
 								</li>
 								{% end %}
 							</ul>
+							<div class="row">
+								<button href="javascript:;" data-type='iwish' data-nextpage="2" id="" class="btn btn-large btn-more span8">更多..</button>
+							</div>
 						</div>
 						<div class="tab-pane" id="3">
-							<ul class="">
+							<ul class="ifollow-list entry-list">
 								{% for wish in arg['ifollow'] %}
 								<li>
 									{{ modules.Entry(wish,poster=False) }}
 								</li>
 								{% end %}
 							</ul>
+							<div class="row">
+								<button href="javascript:;" data-type='ifollow-wish' data-nextpage="2" id="" class="btn btn-large btn-more span8">更多..</button>
+							</div>
 						</div>
 					</div>
 				</div>

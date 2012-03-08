@@ -1,0 +1,10 @@
+<div class="profile row">
+	<div class="span8">
+		<div class="face span1" style="float: left">
+			<a href="/people/{{user.uid}}"><img alt="{{user.displayname or user.uniquename}}" class="" src="{{ user.avatar or '/static/img/no-avatar.jpg' }}" /></a>
+		</div>
+		<div class="detail caption">
+			<a href="/people/{{user.uid}}"><h5 class="span4">{{user.displayname or user.uniquename}}</h5></a>
+		</div>
+	</div>
+</div>

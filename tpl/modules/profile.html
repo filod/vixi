@@ -1,0 +1,16 @@
+<div class="profile row">
+	<div class="span8 thumbnail">
+		<div class="face" style="float: right">
+			<a href="/people/{{arg['user'].uid}}"><img alt="{{arg['user'].displayname or arg['user'].uniquename}}" class="" src="{{ arg['user'].avatar or '/static/img/no-avatar.jpg' }}" /></a>
+		</div>
+		<div class="detail caption">
+			<a href="/people/{{arg['user'].uid}}"><h3 class="span4">{{arg['user'].displayname or arg['user'].uniquename}}</h3></a>
+			<div class="span4">
+				<div class="row attend">
+					<div class="span1"><a href="/people/{{arg['user'].uid}}/follow"><strong>{{arg['follows']}}</strong><span> 关注</span></a></div>
+					<div class="span1"><a href="/people/{{arg['user'].uid}}/follower"><strong>{{arg['followers']}}</strong><span> 粉丝</span></a></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

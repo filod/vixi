@@ -4,50 +4,37 @@
 <div id="inbox-page" class="page">
 	<div class="content-wrap row">
 		<div class="main span8">
-			<div>
-				<h2>私信</h2> 
-			</div>
-			<div>
-				<form action="/inbox" method="post"  class="form-horizontal">
-					<div  class="control-group">
-						<label for="content">发私信给 ：</label>
-						<div class="controls">
-							<textarea name="content" id="content" class="editor">
-												
-							</textarea> 
-						</div>
+			<a href="/inbox"><< 返回私信列表</a>
+			<br />
+			<br />
+			<div class="well">
+				<label>给 {{arg['touser'].displayname}} 发私信</label>
+				<div  class="control-group">
+					
+					<div class="controls">
+						<textarea name="content" id="msg-content" ></textarea>
 					</div>
-					<div class="">
-						<span>
-							<input type="submit" value="发送" class="btn btn-primary" />
-						</span>
-					</div>
-				</form>
+				</div>
+				<div class="">
+					<span class="send-status"></span>
+					<span>
+						<button data-uid="{{arg['touser'].uid}}" href="javascript:;" id="do-send-message" class="btn btn-primary">
+							发送
+						</button> </span>
+				</div>
 			</div>
 			<div class="">
-				<ul>
-					{% for message in arg['conversation'] %}
-					<li>
-						<div data-message-id="{{message.id}}" class="message-entry-wrap">
-							<div class="entry-meta">
-								<img width="30" src="{{message.from_user.avatar or static_url('img/no-avatar.jpg')}}" alt="{{message.from_user.displayname or message.from_user.uniquename}}" />
-								<a  class="author" href="/people/{{message.from_user.uid}}">{{message.from_user.displayname or message.from_user.uniquename}}</a>
-								<span class="time">{{ util.timeformat(message.ctime,long_form=True)	}}</span>
-							</div>
-							<div class="entry-content">
-								<p>
-									{{ message.content }}
-								</p>
-							</div>
-							<div class="entry-util">
-								<a href="javascript:;" class="all-msg"> 删除 </a>
-							</div>
-						</div>
-					</li>
-					{% end %}
+				<ul class="message-list">
+					{% include 'modules/more-msg.html' %}
 				</ul>
+				<div class="row">
+					<button href="javascript:;" data-nextpage="2" data-type='conversation' id="" class="btn btn-large btn-more span8">
+						更多..
+					</button>
+				</div>
 			</div>
-		</div>
+		</div> 
+		{{ modules.Aside(page='inbox') }}
 	</div>
 </div>
 {% end %}

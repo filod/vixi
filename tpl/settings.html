@@ -1,9 +1,17 @@
 {% extends "base.html" %}
+{% block data %}
+<script>
+	vixi.current_user['settings'] = {{arg['settings']}};
+</script>
+{% end %}
 {% block page %}
 <div id="settings" class="page">
 	<div class="content-wrap row">
 		<div class="content">
 			<div class="main span8">
+			<div class="page-header">
+				<h2>设置</h2>
+			</div>
 				<div class="">
 					<div id="tabs" class="tab tabbable">
 						<ul class="nav nav-tabs">
@@ -22,32 +30,33 @@
 						</ul>
 						<div class="tab-content">
 							<div id="1"  class="tab-pane active" >
-								<form action="/settings/profile" enctype="multipart/form-data" target="upload_target" class="form-horizontal">
+								<form id='avatar-form' action="/upload" enctype="multipart/form-data" target="upload_target" class="form-horizontal" method="post">
 									<iframe name="upload_target" style="display:none"></iframe>
 									<div class="control-group">
 										<label>上传头像：</label>
 										<div class="controls">
-											<img width="100" class="avatar-preview" src="http://p1.zhimg.com/05/f4/05f451da1_l.jpg" />
-											<br /><input type="file" id='avatar-file' class="input-text" name="nickname" />
-											<button id='do-upload' class="btn btn-primary">开始上传</button>
+											<img width="100" class="avatar-preview" src="{{arg['current_user'].avatar or static_url('img/no-avatar.jpg')}}" />
+											<br /><input type="file" id='avatar-file' class="input-text" name="avatar-file" />
+											<input type="hidden" name='callback' id='callback-input' />
+											<button type="submit" id='do-upload' class="btn btn-primary">开始上传</button>
 										</div>
 									</div>
 								</form>
-								<form action="/settings/profile" class="form-horizontal">
+								<form action="/settings/profile" class="ajax-form form-horizontal" method="post">
 									<div  class="control-group">
 										<label>昵称：</label>
 										<div class="controls">
-											<input type="text" class="input-text" name="nickname" />
+											<input type="text" class="input-text" name="displayname" value="{{arg['current_user'].displayname}}" />
 										</div>
 									</div>
 									<div class="form-actions">
-											<input type="hidden" name='avatar' />
+										<input type="hidden" id="avatar-input" name='avatar' value="{{arg['current_user'].avatar or ''}}" />
 										<input type="submit" class="btn btn-primary  input-button" value="保存设置" />
 									</div>
 								</form>
 							</div>
 							<div id="2"  class="tab-pane" >
-								<form action="/settings/email" class="form-horizontal">
+								<form action="/settings/email" class="ajax-form form-horizontal" method="post">
 									<div class="control-group">
 										<label for="">给我发送邮件……</label>
 										<div class="controls">
@@ -71,12 +80,12 @@
 								</form>
 							</div>
 							<div id="3" class="tab-pane">
-								<form action="/settings/message" class="form-horizontal">
+								<form action="/settings/message" class="ajax-form form-horizontal">
 									<div  class="control-group">
 										<label for="">谁可以给我发送私信</label>
 										<div class="controls">
 											<label class="radio" for="all"><input type="radio" checked="checked" id="all" name="msg" value="all" />所有人</label>
-											<label class="radio" for="only-i-follow"><input type="radio" id="only-i-follow" name="msg" value="follow" />仅我关注的人</label>
+											<label class="radio" for="only-i-follow"><input type="radio" id="only-i-follow" name="msg" value="ifollow" />仅我关注的人</label>
 										</div>
 									</div>
 									<div class="form-actions">
@@ -85,18 +94,18 @@
 								</form>
 							</div>
 							<div id="4" class="tab-pane">
-								<form action="/settings/account"  class="form-horizontal">
+								<form action="/settings/account"  class="ajax-form form-horizontal">
 									<div class="control-group">
 										<label for="">当前密码：</label>
-										<div class="controls"><input id="cur-passwd" class="xuk" type="password" name="op"></div>
+										<div class="controls"><input id="cur-passwd" class="xuk" type="password" name="curpwd"></div>
 									</div>
 									<div class="control-group">
 										<label for="">新密码：</label>
-										<div class="controls"><input id="new-passwd" class="xuk" type="password" name="np"></div>
+										<div class="controls"><input id="new-passwd" class="xuk" type="password" name="newpwd"></div>
 									</div>
 									<div class="control-group">
 										<label for="">确认密码：</label>
-										<div class="controls"><input id="cnf-passwd" class="input-text required" type="password" name="rp"></div>
+										<div class="controls"><input id="cnf-passwd" class="input-text required" type="password" name="newpwd"></div>
 									</div>
 									<div class="form-actions">
 										<input type="submit" class="btn btn-primary input-button" value="保存设置" />

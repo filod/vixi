@@ -1,0 +1,7 @@
+{% import util %}
+{% for noti in arg['notice']%}
+<li>
+	{{noti['who']}} {{noti['op']}} {{noti['target'] or ''}} <span class="time">{{ util.timeformat(noti['ctime'])}}</span>
+	{{ '<a rel="tooltip" data-uuid="%s"  title="知道啦" href="javascript:;" class="iknow tip"><i class="icon-minus"></i></a>'%noti['uuid'] if arg['is_unread'] else ''}}
+</li>
+{% end %}

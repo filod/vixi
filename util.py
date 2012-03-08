@@ -6,6 +6,9 @@ import functools
 import urlparse
 import urllib
 from tornado.web import HTTPError 
+def truncate(data,length=300,append="…"):
+    return data[:length] + append if len(data) > length else data
+
 def fetch_str(strObj):
     if strObj == None:
         return ''

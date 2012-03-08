@@ -11,7 +11,8 @@ app_config = {
     'autoescape' : None,
     'ui_modules': {"Entry": uimodules.EntryModule,
                    'Aside': uimodules.AsideModule,
-                   "FeedEntry" : uimodules.FeedModule
+                   "FeedEntry" : uimodules.FeedModule,
+                   "PeopleEntry" : uimodules.PeopleModule
                    },
 }
 mysql_config = {
@@ -35,11 +36,15 @@ ret_code_map = {
                 '7': {'ret':'7','req_stat':'done','res_stat':'success','msg':u'添加用户成功','data':None},
                 #通用：
                 '000' : {'ret':'000','req_stat':'fail','res_stat':'success','msg':u'提交参数错误','data':None},
-                '001' : {'ret':'001','req_stat':'done','res_stat':'success','msg':u'常规数据返回：user timeline','data':None},
+                '001' : {'ret':'001','req_stat':'done','res_stat':'success','msg':u'常规数据返回：user feed','data':None},
                 '002' : {'ret':'002','req_stat':'done','res_stat':'success','msg':u'操作成功','data':None},
                 '003' : {'ret':'003','req_stat':'done','res_stat':'failure','msg':u'操作失败','data':None},
                 '004' : {'ret':'004','req_stat':'fail','res_stat':'failure','msg':u'请求错误','data':None},
                 '005' : {'ret':'005','req_stat':'done','res_stat':'success','msg':u'请求成功：用户好友','data':None},
+                '006' : {'ret':'006','req_stat':'done','res_stat':'success','msg':u'常规数据返回：more motice','data':None},
+                '007' : {'ret':'007','req_stat':'done','res_stat':'success','msg':u'常规数据返回：more wish','data':None},
+                '008' : {'ret':'008','req_stat':'done','res_stat':'success','msg':u'常规数据返回：more message','data':None},
+                '009' : {'ret':'008','req_stat':'done','res_stat':'success','msg':u'常规数据返回：more conversation','data':None},
                 #愿望相关：
                 '100' : {'ret':'100','req_stat':'done','res_stat':'success','msg':u'保存愿望成功','data':None},
                 '101' : {'ret':'101','req_stat':'done','res_stat':'failure','msg':u'保存愿望失败：未找到该愿望','data':None},
@@ -52,6 +57,17 @@ ret_code_map = {
                 '204' : {'ret':'204','req_stat':'fail','res_stat':'success','msg':u'清除未读通知失败','data':None},
                 #私信：
                 '300' : {'ret':'300','req_stat':'done','res_stat':'success','msg':u'发送私信成功','data':None},
+                '301' : {'ret':'301','req_stat':'done','res_stat':'failure','msg':u'发送私信失败：对方设置了不接受陌生人私信，需要在关注你后你才能发送私信给对方','data':None},
+
+                #账户设置
+                '400' : {'ret':'400','req_stat':'done','res_stat':'success','msg':u'修改密码成功','data':None},                
+                '401' : {'ret':'401','req_stat':'done','res_stat':'failure','msg':u'修改密码失败：原始密码输入错误','data':None},                
+                '402' : {'ret':'402','req_stat':'done','res_stat':'success','msg':u'修改基本资料成功','data':None},                
+                '403' : {'ret':'403','req_stat':'done','res_stat':'failure','msg':u'修改基本资料失败','data':None},                                
+                '404' : {'ret':'404','req_stat':'done','res_stat':'success','msg':u'修改私信设置成功','data':None},                
+                '405' : {'ret':'405','req_stat':'done','res_stat':'failure','msg':u'修改私信设置失败','data':None},                                
+                '406' : {'ret':'406','req_stat':'done','res_stat':'success','msg':u'修改email设置成功','data':None},                
+                '407' : {'ret':'407','req_stat':'done','res_stat':'failure','msg':u'修改email设置失败','data':None},                                
                 #关系：
                 #其他：
                 '0000': {'ret':'0000','req_stat':'fail','res_stat':'failure','msg':u'未知错误'}

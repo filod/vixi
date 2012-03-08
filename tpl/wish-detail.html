@@ -4,12 +4,35 @@
 	<div class="content-wrap">
 		<div class="content row">
 			<div class="main span8">
-				{{ modules.Entry(wish=arg['wish']) }}
+				{{ modules.Entry(wish=arg['wish'],vote=True,detail=True) }}
+				<h4>评论们：</h4>
 				<div class="comment-list-wrap"  data-wid="{{arg['wish'].wid}}" >
 				</div><!-- comment-list -->
 				{% include 'modules/comment-box.html' %} <!-- comment-box -->
 			</div>
 			{{ modules.Aside(page='wish',wish=arg['wish']) }}
+		</div>
+	</div>
+	{% include 'modules/message.html' %}
+	<div class="modal dis" id="realize-modal">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">×</a>
+			<h3>已经实现这个愿望啦？</h3>
+		</div>
+		<div class="modal-body">
+			<p>想感谢帮助你实现愿望的人？你想要说些什么吗？</p>
+			<p>
+				<textarea class="" name="content" id="mdata-content" ></textarea>
+			</p>
+		</div>
+		<div class="modal-footer">
+			<span class="send-status"></span>
+			<button data-uid="{{arg['user'].uid}}" rel="tooltip" title="该操作成功后愿望将不能再被编辑" href="javascript:;" id="do-realize" class="btn btn-primary">
+				标记并锁定愿望
+			</button>
+			<button href="javascript:;" data-dismiss="modal" class="btn">
+				关闭
+			</button>
 		</div>
 	</div>
 </div>

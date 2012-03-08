@@ -18,11 +18,9 @@
 			<th>ctime </th>
 			<th>stat </th>
 			<th>is_public </th>
-			<th>is_anonymous </th>
-			<th>bless_count </th>
-			<th>follow_count </th>
+			<th>is_anonymous </th>                 
 			<th>tag </th>
-			<th>操作</th>
+			<th>操作</th>                                         
 		</tr>
 		{% import util %}
 		{% for wish in arg['data'] %}
@@ -34,9 +32,7 @@
 			<td>{{util.timeformat(wish.ctime ,long_form=True) }}</td>
 			<td>{{wish.stat   		}}</td>
 			<td>{{wish.is_public   }}</td>
-			<td>{{wish.is_anonymous}}</td>
-			<td>{{wish.bless_count }}</td>
-			<td>{{wish.follow_count}}</td>
+			<td>{{wish.is_anonymous}}</td> 
 			<td>
 			{% for item in wish.tags %}
 				<a href="/tag/{{item}}">{{item}}</a>

@@ -1,30 +1,52 @@
 {% extends "base.html" %}
+{% block style %}
+<style type="text/css">
+	.pool{
+		-webkit-column-count: 4;
+		-webkit-column-gap: 10px;
+		-webkit-column-width: 210px ;
+		-webkit-column-fill: auto;
+	}
+	.pool .item{
+		display:inline-block;
+		border: 1px solid #eee;
+		padding: 10px;
+		margin: 5px;
+	}
+	.item:hover{
+	border: 1px solid #2BE;
+	background: #FAFAFA;
+	}
+</style>
+{% end %}
+{% block head %} <script type="text/javascript" src="{{ static_url('js/lib/jquery.masonry.min.js') }}" charset="utf-8"></script>
+<script type="text/javascript">// $(function() {
+	// $('.pool').masonry({
+	// itemSelector : '.item'
+	// });
+	// });</script>
+{% end %}
 {% block page %}
 <div id="wish-page-pool" class="page">
-	<div class="content-wrap">
-		<div class="content">
-			<div class="main">
-				<div class="wish-pool-wrap">
-					<div class="panel">
-						<span class="change">
-							<button class="btn btn-primary" >
-								池子里捞一把！
-							</button></span>
+	<div class="content-wrap row">
+		<div class="main span12">
+			<div class="page-header">
+				<h2>许愿池</h2>
+			</div>
+			<div class="wish-pool-wrap">
+				<div class="panel">
+					<span class="change"> <a href="/wishpool" class="btn btn-primary" > 池子里捞一把！ </a></span>
+				</div>
+				<div class="pool">
+					{% for i in range(0,len(arg['wishes']))%}
+					<div class="item ">
+						{{ modules.Entry(arg['wishes'][i],poster=False) }}
 					</div>
-					<div class="pool">
-						<ul class="">
-							{% for wish in arg['wishes'] %}
-							<li>
-								{{ modules.Entry(wish,poster=False) }}
-							</li>
-							{% end %}
-						</ul>
-						<!--wish-entry-wrap -->
-					</div>
+					{% end %} <!--wish-entry-wrap -->
 				</div>
 			</div>
-			<!-- aside -->
 		</div>
+		<!-- aside -->
 	</div>
 </div>
 {% end %} 
